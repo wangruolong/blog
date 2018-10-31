@@ -2,7 +2,11 @@
 Auto build front end and back end in the same project
 
 ---
+title: 前后端自动化构建
+date: 2017-09-01 11:48:00
+categories:
 - 构建相关
+tags:
 - 自动化构建
 ---
 
