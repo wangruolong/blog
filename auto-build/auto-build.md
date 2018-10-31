@@ -1,6 +1,3 @@
-# auto-build
-Auto build front end and back end in the same project
-
 ---
 title: 前后端自动化构建
 date: 2017-09-01 11:48:00
@@ -10,7 +7,6 @@ tags:
 - 自动化构建
 ---
 
-# 前后端自动化构建
 ## 背景简介
 1. 前端项目每次发布的时候需要手动 run build然后提交dist。难道就没有办法来解决这种没意义而又重复劳作的事情吗？
 2. git上面居然会有编译后的文件，你的良心不会痛吗？<img src="./images/1.jpg" width = "90" height = "90" alt="你的良心不会痛吗？" align=center />
