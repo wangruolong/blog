@@ -1,6 +1,7 @@
 ---
 title: 前后端自动化构建
 date: 2017-09-01 11:48:00
+author: 大大白
 categories:
 - 构建相关
 tags:
@@ -9,7 +10,7 @@ tags:
 
 ## 背景简介
 1. 前端项目每次发布的时候需要手动 run build然后提交dist。难道就没有办法来解决这种没意义而又重复劳作的事情吗？
-2. git上面居然会有编译后的文件，你的良心不会痛吗？<img src="./images/1.jpg" width = "90" height = "90" alt="你的良心不会痛吗？" align=center />
+2. <div style="display:inline-block;height:64px;line-height:64px;">git上面居然会有编译后的文件，你的良心不会痛吗？</div><div style="display:inline-block;width:64px;height:64px;vertical-align:bottom">{% asset_img 1.jpg 你的良心不会痛吗？ %}<div>
 3. 配置文件是通过匹配域名来区分不同的变量，不觉得这很low吗？
 4. 你还在为当接口出问题因为看不到服务端代码而不知道怎么跟人家吵架而感到苦恼吗？
 5. 用npm run build然后提交dist发布这样会隐藏着一个定时炸弹。在windows下是大小写不敏感的，当你编译完之后那些文件已经互相链接在一起，发布到linux当然可以正常运行。但是假如有一天，项目组决定不能再在本地构建然后提交代码了，必须要在sdp构建。那么linux下是大小写敏感的，编译的时候文件链接不到一起，就会报各种xxx文件找不到。
@@ -207,5 +208,5 @@ Maven是一个项目管理的综合工具。Maven提供了开发人员构建一�
 
 ---
 <div align=center><h2>如果觉得我的文章对您有用，请随意打赏。您的支持将鼓励我继续创作！</h2></div>
-<div align=center><img src="./images/receiving.jpg" width=300 /></div>
+<div align=center><img src="receiving.jpg" width=300 /></div>
 
