@@ -1,7 +1,7 @@
 ---
 title: 前后端自动化构建
-date: 2017-09-01 11:48:00
 author: 大大白
+date: 2017-09-01 11:48:00
 categories:
 - 构建相关
 tags:

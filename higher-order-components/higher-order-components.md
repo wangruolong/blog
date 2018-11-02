@@ -1,6 +1,6 @@
 ---
 title: 深入理解React高阶组件
-author: 王若龙
+author: 大大白
 date: 2017-12-29 12:00:00
 categories:
 - 高阶组件
