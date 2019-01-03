@@ -81,14 +81,37 @@ Hexo的模板是指在新建的markdown文件中默认填充的内容。例如�
 # 配置
 您可以在 _config.yml 中修改大部分的配置。
 
-## 网站
-## 网址
-## 目录
-## 文章
-## 分类 & 标签
-## 日期 / 时间格式
-## 分页
-## 扩展
+## Site
+配置网站的相关信息
+
+```
+title: 大大白的个人博客
+subtitle: 人生就像一场旅行，身体和灵魂总有一个要在路上！
+description: 沉淀下来的东西，才是真正属于自己的财富！
+keywords: 技术博客
+author: 大大白
+language: zh-CN
+timezone: Asia/Shanghai
+```
+
+## theme
+配置主题，可以访问https://hexo.io/themes/，看到满意的主题下载到本地的themes目录下，并配置然后在_config.yml里面配置theme指向对应的目录。
+
+```
+theme: hexo-theme-next
+```
+
+## Deployment
+部署。可以把生成的静态页面部署到git仓库。注意deploy的下面有空格。
+```
+deploy:
+  type: git 
+  repository: git@github.com:wangruolong/wangruolong.github.io.git
+  branch: master
+  message: deploy my blog
+```
+
+更多信息请查看https://hexo.io/zh-cn/docs/configuration
 
 # 命令
 ## init
