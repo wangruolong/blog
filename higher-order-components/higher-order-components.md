@@ -8,7 +8,7 @@ tags:
 - 高阶组件
 ---
 
-# 背景介绍
+# 概述
 
 ## React Mixins
 

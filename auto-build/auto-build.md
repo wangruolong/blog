@@ -8,7 +8,7 @@ tags:
 - 自动化构建
 ---
 
-## 背景简介
+## 概述
 1. 前端项目每次发布的时候需要手动 run build然后提交dist。难道就没有办法来解决这种没意义而又重复劳作的事情吗？
 2. <div style="display:inline-block;height:64px;line-height:64px;">git上面居然会有编译后的文件，你的良心不会痛吗？</div><div style="display:inline-block;width:64px;height:64px;vertical-align:bottom">{% asset_img 1.jpg 你的良心不会痛吗？ %}<div>
 3. 配置文件是通过匹配域名来区分不同的变量，不觉得这很low吗？
