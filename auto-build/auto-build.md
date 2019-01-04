@@ -80,8 +80,8 @@ Maven是一个项目管理的综合工具。Maven提供了开发人员构建一�
 ### 不同的环境配置了不同的webpack，如果不能手动run build，那我该如何让其自动选择对应环境的webpack？
 - 先看如何配置
     * pom.xml
-    ```
-        compile阶段的相关配置
+    ```xml
+        <!-- compile阶段的相关配置 -->
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-compiler-plugin</artifactId>
@@ -92,7 +92,7 @@ Maven是一个项目管理的综合工具。Maven提供了开发人员构建一�
                 <showWarnings>true</showWarnings>
             </configuration>
         </plugin>
-        package阶段之前执行的一些插件
+        <!-- package阶段之前执行的一些插件 -->
         <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>exec-maven-plugin</artifactId>
@@ -129,7 +129,7 @@ Maven是一个项目管理的综合工具。Maven提供了开发人员构建一�
                 </execution>
             </executions>
         </plugin>
-        package阶段的相关配置
+        <!-- package阶段的相关配置 -->
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-war-plugin</artifactId>
