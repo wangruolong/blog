@@ -3,15 +3,13 @@ title: 使用hexo搭建个人博客
 author: 大大白
 date: 2019-01-03 12:00:00
 categories:
-- hexo
 - 个人博客
 tags: 
-- hexo
 - 个人博客
 ---
 
-# 概述
 Hexo 是一个快速、简洁且高效的博客框架。Hexo 使用 Markdown（或其他渲染引擎）解析文章，在几秒内，即可利用靓丽的主题生成静态网页。详细可以查看https://hexo.io/zh-cn/docs/
+
 <!-- more -->
 
 ## 安装
@@ -163,3 +161,32 @@ deploy:
 
 
 更多命令请查看https://hexo.io/zh-cn/docs/commands
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+nginx 
+yum install gcc
+yum install pcre-devel
+yum install zlib zlib-devel
+yum -y install openssl openssl-devel
+
+wget http://nginx.org/download/nginx-1.13.7.tar.gz
+tar -xvf nginx-1.13.7.tar.gz
+cd nginx-1.13.7/
+./configure --with-http_ssl_module
+make
+make install
