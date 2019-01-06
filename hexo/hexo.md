@@ -163,7 +163,7 @@ deploy:
 更多命令请查看https://hexo.io/zh-cn/docs/commands
 
 
-#在使用hexo遇到的几个坑
+# 在使用hexo遇到的几个问题。
 1. 发布新的主题没有生效。这个分两种情况，一种是site的root路径配错了导致资源文件找不到，建议直接/。另一种是git合并策略的问题，可以`hexo clean`，然后再`hexo deploy`，就肯定没问题了。
 
 
