@@ -8,36 +8,13 @@ tags:
 - 设计思想
 ---
 
-Formtastic表单引擎是一个采用了单向数据流，双向数据绑定，三大事件机制，四大核心驱动，打通五脏六腑七经八脉，按照九大设计模式为指导思想的十全十美的表单引擎。
-
-本次的分享将带你走进Formtastic的世界，为你阐述其设计思想，让你领悟其设计精髓，为Formtastic正名！
+本文描述的表单引擎是一个采用了单向数据流，双向数据绑定，三大事件机制，四大核心驱动，打通五脏六腑七经八脉，按照九大设计模式为指导思想的十全十美的表单引擎。本文将带你走进表单引擎的世界，为你阐述其设计思想，让你领悟其设计精髓！
 
 <!-- more -->
 
-## 用过Formtastic的人的评价
-- 看了一个礼拜还是一头雾水
-- 说是三分钟入门，我看了三个月还不懂这个东西是怎么回事
-- 看到Formtastic就害怕
-- 那我只能表示遗憾了
-- 离职
-- 离职
-- 离职
-- 离职
-- ...
-
-## 为什么会这样
-- 看到我弄了一个模板配置表单的感觉好复杂；
-- 然后你看到后，也赶紧弄出了一个更加复杂的数据结构让两个加起来更加复杂；
-- 然后他看到你做的这些后，赶紧加入了saga并且封装了一些没几个人能看得懂的方法和工具；
-- 然后我看到他做的这些后，赶紧加入了中介者dependencies；
-- 然后他看到后，赶紧加入了logic；
-- 然后你看到后又加了courier；
-- 于是这个引擎越来越复杂。。。
-
-就这样我做的你没看懂，你做的他没看懂，他做的我也没看懂。好在最终经过不断的磨合，所有的东西还是可以通过一条主线串起来。我们原来只要理解自己做的那部分就可以，但是你们却需要理解所有人做的东西。只有我们自己心里清楚，这整个是怎么串起来的。
-
-## 取其精华去其糟粕
-###  设计模式
+# 设计思想
+表单引擎在创建组件的时候为了让组件实例在容器中只能有一个采用了单例模式。在设计组件上采用了优雅的装饰者模式。组件之间互相访问采用的是中介者模式。
+##  设计模式
 - 创建型
     + 单例模式
 - 结构型
@@ -54,10 +31,11 @@ Formtastic表单引擎是一个采用了单向数据流，双向数据绑定，�
     + 策略模式
     + 访问者模式
 
-### 控制反转（Inversion of Control）
-- 依赖注入
-- 依赖查找
-
+## 控制反转（Inversion of Control）
+表单引擎将组件`component`注入到`IoC`容器里面，并通过组件的`key`进行查找。这里使用了`依赖注入（Dependency Injection）`和`依赖查找（Dependency Lookup）`的思想。并通过单例模式的方式让组件在容器中保持唯一。
+依赖注入和依赖查找是控制反转（Inversion of Control，缩写为IoC）的重要思想，简单来说就是把原来自己的控制权限转交给别人。
+- 依赖注入（Dependency Injection）：将组件注入到容器。
+- 依赖查找（Dependency Lookup）：在容器中找到组件。
 ```javascript
 class IoC {
     constructor() {
@@ -78,17 +56,20 @@ class IoC {
 }
 ```
 
-### 面向切面（Aspect-Oriented Programming）
+## 面向切面（Aspect-Oriented Programming）
+表单引擎在预编译的时候把`this._onChange`与`this._aop`绑定在一起，在`onChange`运行时的时候才真正去出发`this._aop`中的方法。
 面向切面编程，通过预编译方式和运行期动态代理实现程序功能的统一维护的一种技术。
-- 预编译：编译时把当前的方法放入AOP中。
-- 运行时：运行时AOP中会动态的把需要的方法织入。
+- 预编译（precompile）：编译时把当前的方法放入AOP中。
+- 运行时（runtime）：运行时AOP中会动态的把需要的方法织入。
 ```javascript
  <RadioGroup options={options}
              onChange={this._aop.bindArgs(this._onChange, this, { target: { value: !this.state.value } })}
              value={this.state.value} />
 ```
 
-### 数据流驱动与模板驱动
+## 数据驱动与事件驱动
+目前采用的是事件驱动的方式。
+
 ```javascript
 const config = {
     AOP: true
@@ -103,12 +84,13 @@ let eventConfig = {
     DSL: '(function (args){if(args===true){return 4} else {return 2}})'//自定义方法
 }
 ```
-### 形成的规范
-- 组件必须装饰@FormtasticMini，必须继承BaseComponent。
+## 规范
+- 组件必须装饰@FormEngine，必须继承BaseComponent。
 - 组件必须以函数驱动为导向，出入格式要规范参数全部用数组传递等等。
 - 每个组件都必须提供自己的API列表，方便其他开发者配置和使用。
 
-### 基类BaseComponent
+## 基类BaseComponent
+每个组件把自己转交给IoC容器，然后继承BaseComponent在切面中编写代码。
 - 实例化IoC容器，并且把组件注入到容器中。
 - 绑定aop切面，让子类可以方便的使用aop切面。
 
@@ -122,7 +104,7 @@ export class BaseComponent extends Component {
     }
     componentWillMount() {
         if (this.props.displayName && this.props.displayName !== 'undefined') {
-            if (!(this.props.displayName.indexOf('FormtasticMini') > -1)) {
+            if (!(this.props.displayName.indexOf('FormEngine') > -1)) {
                 this.IoC.injection(this.props.displayName, this)
             }
         }
@@ -133,7 +115,7 @@ export class BaseComponent extends Component {
 }
 ```
 
-### 核心类FormtasticMini
+## 核心类FormEngine
 - 为什么要使用反向继承？
     + 从宏观的角度来看
         * 继承子组件的属性，并且可以控制子组件。
@@ -154,10 +136,10 @@ export class BaseComponent extends Component {
 
 
 ```javascript
-export function FormtasticMini(WrappedComponent) {
+export function FormEngine(WrappedComponent) {
     let ProxyComponent = new Proxy(WrappedComponent, handler)
     return class EC extends WrappedComponent {
-        static displayName = `FormtasticMini(${getDisplayName(WrappedComponent)})`
+        static displayName = `FormEngine(${getDisplayName(WrappedComponent)})`
         constructor() {
             super()
         }
@@ -223,12 +205,12 @@ let handler = {
 
 ```
 
-### 应用方
-- 加入@FormtasticMini注解，把自己注入到IoC容器中。
-- 继承BaseComponent，可以使用ioc和aop
+# 如何接入
+- 加入@FormEngine注解，把自己注入到IoC容器中。
+- 继承BaseComponent，可以使用ioc和aop。
 
 ```javascript
-@FormtasticMini
+@FormEngine
 export default class EditMode extends BaseComponent {
     static displayName = 'Rate.EditMode'
     static propTypes = {
@@ -283,7 +265,7 @@ export default class EditMode extends BaseComponent {
 ```
 
 ```javascript
-@FormtasticMini
+@FormEngine
 export default class EditMode extends BaseComponent {
     static displayName = 'StandardCase.EditMode'
     static propTypes = {
@@ -337,9 +319,8 @@ export default class EditMode extends BaseComponent {
 }
 ```
 
-### 动态加载组件库
+## 动态加载组件库
 - ToolsMng类
-
 ```javascript
 export default new class ToolsMng {
 	constructor() {
@@ -357,18 +338,21 @@ export default new class ToolsMng {
 }
 ```
 
-> ToolsInit类
+- ToolsInit类
 ```javascript
 import toolMng from './toolsMng'
 toolMng.registerTool('audio_recorder', require('./audioRecorder'))
 ```
 
-> 具体创建方式
+- 具体创建方式
 ```javascript
 const comp = toolMng.getTool(tool.key, tool.version)//取出配置信息的key
 React.createElement(comp || ToolNotFound, props)
 ```
 
 ---
-<div align=center><h2>如果觉得我的文章对您有用，请随意打赏。您的支持将鼓励我继续创作！</h2></div>
-<div align=center><img src="receiving.jpg" width=300 /></div>
+<div align=center><h4>一分钱也是爱！感谢您的支持！</h4></div>
+<div style="display:flex;flex-wrap:wrap;justify-content:space-around;">
+        <div><img src="weixin.jpg" /></div>
+        <div><img src="zhifubao.jpg" /></div>
+</div>

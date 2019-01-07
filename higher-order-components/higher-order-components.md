@@ -707,5 +707,8 @@ https://facebook.github.io/react/blog/2016/07/13/mixins-considered-harmful.html
 http://hackll.com/2015/07/24/decorators-in-es7/%0d
 
 ---
-<div align=center><h2>如果觉得我的文章对您有用，请随意打赏。您的支持将鼓励我继续创作！</h2></div>
-<div align=center><img src="receiving.jpg" width=300 /></div>
+<div align=center><h4>一分钱也是爱！感谢您的支持！</h4></div>
+<div style="display:flex;flex-wrap:wrap;justify-content:space-around;">
+        <div><img src="weixin.jpg" /></div>
+        <div><img src="zhifubao.jpg" /></div>
+</div>

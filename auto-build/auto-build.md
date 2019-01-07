@@ -206,6 +206,10 @@ Maven是一个项目管理的综合工具。Maven提供了开发人员构建一�
     * 一个量化的数据是，原来用npm run build 因为工程大，项目文件多，每次run build 都要非常久，然后还要commit才能发布。后来经过改造，在`package打包阶段`过滤掉了许多文件大幅减少IO，同时只打包有用的文件，从整体上提高了发布速度，从原来的将近半个小时缩短为三分钟。
 
 ---
-<div align=center><h2>如果觉得我的文章对您有用，请随意打赏。您的支持将鼓励我继续创作！</h2></div>
-<div align=center><img src="receiving.jpg" width=300 /></div>
+<div align=center><h4>一分钱也是爱！感谢您的支持！</h4></div>
+<div style="display:flex;flex-wrap:wrap;justify-content:space-around;">
+        <div><img src="weixin.jpg" /></div>
+        <div><img src="zhifubao.jpg" /></div>
+</div>
+
 
