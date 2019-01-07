@@ -39,5 +39,4 @@ make
 6. 安装。
 make install
 
-
 # 安装rar解压工具。
