@@ -1,7 +1,7 @@
 ---
 title: Linux服务器基本配置
 author: 大大白
-date: 2019-01-06 18:30:00
+date: 2015-01-06 18:30:00
 categories:
 - Linux
 - 服务器基本配置

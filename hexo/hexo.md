@@ -1,7 +1,7 @@
 ---
 title: 使用hexo搭建个人博客
 author: 大大白
-date: 2019-01-03 12:00:00
+date: 2016-01-03 12:00:00
 categories:
 - 个人博客
 tags: 

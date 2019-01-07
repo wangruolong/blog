@@ -1,21 +1,25 @@
 ---
 title: 前端基础技能
 author: 大大白
-date: 2018-11-03 12:00:00
+date: 2017-11-03 12:00:00
 categories:
 - 前端基础
 tags: 
 - 前端基础
 ---
 
-前端技能的积累，以后需要可以来这里查找。
+前端基础知识积累。
 
 <!-- more -->
-## path
-- npm install path
-- __dirname：指向当前执行的js的文件的路径。
-- 连接路径：path.join([path1][, path2][, ...])
-- 路径解析：path.resolve([from ...], to)
+# Node.js
+
+- `Node.js` 中，`__dirname` 总是指向被执行js文件的绝对路径。
+
+# path
+要使用`path`需要先`npm install path`，然后再在需要的文件里面引入`const path = require('path');`才可以使用。
+两种用法：
+1. 连接路径：path.join([path1][, path2][, ...])
+2. 路径解析：path.resolve([from ...], to)
 
 ```javascript
 var path = require('path');
