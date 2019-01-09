@@ -1,12 +1,11 @@
 ---
-title: Linux服务器基本配置
+title: Linux
 author: 大大白
 date: 2015-01-06 18:30:00
 categories:
-- Linux
-- 服务器基本配置
+- Linux服务器基本配置
 tags: 
-- Linux
+- Linux服务器基本配置
 ---
 
 Linux服务器标配的基本环境。

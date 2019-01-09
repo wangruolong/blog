@@ -1,19 +1,22 @@
 ---
 title: Git
 author: 大大白
-date: 2017-11-03 12:00:00
+date: 2018-01-03 12:00:00
 categories:
 - Git
 tags: 
 - Git
 ---
 
+Git在使用过程中的一些积累和沉淀。目前包含了Sourcetree的安装使用、Gerrit基本用法、Submodule的基本用法等。
+<!-- more -->
+
 # Sourcetree
-安装和使用Sourcetree
+安装和使用Sourcetree。
 # Gerrit
-gerrit使用说明
+Gerrit的基本用法。
 # Submodule
-## 什么是submodule
+## 什么是Submodule
 有种情况我们经常会遇到：某个工作中的项目需要包含并使用另一个项目。 也许是第三方库，或者你独立开发的，用于多个父项目的库。 现在问题来了：你想要把它们当做两个独立的项目，同时又想在一个项目中使用另一个。
 Git 通过子模块来解决这个问题。 子模块允许你将一个 Git 仓库作为另一个 Git 仓库的子目录。 它能让你将另一个仓库克隆到自己的项目中，同时还保持提交的独立。
 
@@ -60,7 +63,7 @@ $ cat .gitmodules
 
 > 现在我们已经让`kindergarten-gis-web`和`preschool-gis`关联在一起了。那么别的小伙伴怎么用呢？
 
-### 检出拉取的基本用法
+### 基本的检出和拉取
 - 检出。根据检出的时机不同分两种情况。
     * 第一种：在主项目未添加submodule的时候已经检出，这时候要获取submodule的代码需要如下操作。
         ```
