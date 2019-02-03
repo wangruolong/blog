@@ -70,35 +70,64 @@ Babel 的配置文件是`.babelrc`，存放在项目的根目录下。使用 Bab
 }
 ```
 
-- `presets`字段设定转码规则，官方提供以下的规则集，你可以根据需要安装。
+##  `presets`
+`presets`字段设定转码规则，官方提供以下的规则集，你可以根据需要安装。
 
 ```
 # 最新转码规则
 $ npm install --save-dev babel-preset-latest
+
 # react 转码规则
 $ npm install --save-dev babel-preset-react
+
 # 不同阶段语法提案的转码规则（共有4个阶段），选装一个
+# Stage 0 - Strawman（展示阶段）
+# Stage 1 - Proposal（征求意见阶段）
+# Stage 2 - Draft（草案阶段）
+# Stage 3 - Candidate（候选人阶段）
+# Stage 4 - Finished（定案阶段）
 $ npm install --save-dev babel-preset-stage-0
 $ npm install --save-dev babel-preset-stage-1
 $ npm install --save-dev babel-preset-stage-2
 $ npm install --save-dev babel-preset-stage-3
 ```
 
-然后，将这些规则加入.babelrc。
-
+## `plugins`
+`plugins`字段设定插件
+- 当项目启用generate的时候报错`regeneratorRuntime is not defined`，则需要安装`babel-plugin-transform-runtime`插件
+- transform-decorators-legacy
+- add-module-exports
 ```json
-  {
-    "presets": [
-      "latest",
-      "react",
-      "stage-2"
-    ],
-    "plugins": []
-  }
+{
+  "presets": [
+    "env",
+    "es2015",
+    "react",
+    "stage-2"
+  ],
+  "plugins": [
+    "add-module-exports",
+    "transform-runtime"
+    "transform-decorators-legacy",
+  ]
+}
 ```
 
-
-
+## 在webpack中
+`Using removed Babel 5 option`报错使用了被移除的babel5中的语法，是因为没有把node_module排除掉。目录是相对package.json的路径。
+```
+   module: {
+        rules: [
+            {
+                exclude:/node_modules/,
+                test: /\.(js|jsx)$/,
+                loader: 'babel-loader'
+            }
+        ]
+   }
+```
+# react-router踩坑之旅
+- react15之后prop-types被剥离开来，而react-router里面的很多写法还是react.proptypes这样肯定报错。所以有两种方案，一种是把react降到15之前（不包括15），另外一种就是把react-router升级到3.x以上版本。为什么不直接升级到4.x因为我试用了一下发现是服务端渲染，而且一大堆配套的都要升级，因此升级到3.x是最明智的选择。
 
 
 
