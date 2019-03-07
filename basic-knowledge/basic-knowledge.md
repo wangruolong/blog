@@ -91,12 +91,6 @@ $ npm install --save-dev babel-preset-stage-1
 $ npm install --save-dev babel-preset-stage-2
 $ npm install --save-dev babel-preset-stage-3
 ```
-
-## `plugins`
-`plugins`字段设定插件
-- 当项目启用generate的时候报错`regeneratorRuntime is not defined`，则需要安装`babel-plugin-transform-runtime`插件
-- transform-decorators-legacy
-- add-module-exports
 ```json
 {
   "presets": [
@@ -104,7 +98,21 @@ $ npm install --save-dev babel-preset-stage-3
     "es2015",
     "react",
     "stage-2"
-  ],
+  ]
+}
+```
+如果presets没有设置`stage-2`，因为这里面有些语法还在`stage-2`阶段还没有正式发布，所以如果没有加上这个配置就无法解析这种语法。
+<img src="presets没有设置stage-2.png" />
+
+
+## `plugins`
+
+`plugins`字段设定插件
+- 当项目启用generate的时候报错`regeneratorRuntime is not defined`，则需要安装`babel-plugin-transform-runtime`插件
+- transform-decorators-legacy
+- add-module-exports
+```json
+{
   "plugins": [
     "add-module-exports",
     "transform-runtime"
@@ -114,25 +122,127 @@ $ npm install --save-dev babel-preset-stage-3
 ```
 
 ## 在webpack中
-`Using removed Babel 5 option`报错使用了被移除的babel5中的语法，是因为没有把node_module排除掉。目录是相对package.json的路径。
-```
+`Using removed Babel 5 option`报错使用了被移除的babel5中的语法，是因为没有把`node_modules`排除掉。目录是相对package.json的路径。
+因为`node_modules`里面有一些包是用了Babel 5中的语法，但是在这个loader里面又是被移除了，所以就报错了，根本解决办法就是把`node_modules`exclude掉。
+```js
    module: {
         rules: [
             {
                 exclude:/node_modules/,
                 test: /\.(js|jsx)$/,
-                loader: 'babel-loader'
+                loader: ['babel-loader','eslint-loader']
             }
         ]
    }
 ```
-# react-router踩坑之旅
-- react15之后prop-types被剥离开来，而react-router里面的很多写法还是react.proptypes这样肯定报错。所以有两种方案，一种是把react降到15之前（不包括15），另外一种就是把react-router升级到3.x以上版本。为什么不直接升级到4.x因为我试用了一下发现是服务端渲染，而且一大堆配套的都要升级，因此升级到3.x是最明智的选择。
+<img src="未exclude导致的babel报错.png" />
 
+# eslint
+- package.json
+```json
+{
+"babel-eslint": "^10.0.1",
+"eslint": "^5.13.0",
+"eslint-plugin-react": "^7.12.4",
+"eslint-loader": "^2.1.1",
+}
+```
+## eslintrc.json
+特别要注意parser要设置babel-eslint，用babel转换之后给eslint验证规则。
+`babel-eslint`，`eslint`，`eslint-plugin-react`主要用于eslintrc.json的配置。
+```json
+{
+  "parser": "babel-eslint",
+  "plugins": ["react"],
+  "env": {
+    "browser": true,
+    "commonjs": true,
+    "es6": true
+  },
+  "extends": ["plugin:react/recommended"],
+  "settings": {
+    "react": {
+      "createClass": "createReactClass",
+      "pragma": "React",
+      "version": "detect",
+      "flowVersion": "0.53"
+    },
+    "propWrapperFunctions": [
+      "forbidExtraProps",
+      { "property": "freeze", "object": "Object" },
+      { "property": "myFavoriteWrapper" }
+    ]
+  },
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "ecmaVersion": 2018,
+    "sourceType": "module"
+  },
+  "rules": {
+    "indent": ["error", "tab"],
+    "linebreak-style": ["error", "windows"],
+    "quotes": ["error", "single"],
+    "semi": ["error", "never"]
+  }
+}
 
+```
+## webpack.js
+`eslint-loader`用于webpack的配置。
+```js
+module: {
+		rules: [
+			{
+				exclude: /node_modules/,
+				test: /\.(js|jsx)$/,
+				loader: ['babel-loader','eslint-loader']
+			}
+    ]
+}
+```
+## 增加钩子让用户在提交前都执行以下eslint。
+Git hooks made easy
+在package.json增加husky依赖，同时配置commit之前和push之前需要执行的命令，强制用户执行eslint检查。
+```json
+{
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm test",
+      "pre-push": "npm test",
+      "...": "..."
+    }
+  },
+  "devDependencies":{
+    "husky": "^1.3.1",
+  }
+}
+```
 
+# webpack
+## 样式表的Loader`style-loader ``css-loader``sass-loader`
+- style-loader把css放到<styles/>里面，而css-Loader则是把css通过<link/>引入。
+- 启用MiniCssExtractPlugin.loader会把css进行压缩。
+- `css-loader`要启用modules=true，在代码里面才能import styles from 'style.css'。同时设置localIdentName规则把css的名称进行干扰，防止全名冲突。
+```js
+{
+  loader: 'css-loader',
+  options: {
+    modules: true,
+    localIdentName: '[path][name]__[local]--[hash:base64:5]'
+  }
+}
+```
+<img src="未开启modules.png" />
+<img src="开启modules.png" />
 
-
+# React
+## react router
+未装propTypes报错`Cannot read property 'array' of undefined`
+react15之后prop-types被剥离开来，而react-router里面的很多写法还是react.proptypes这样肯定报错。所以有两种方案，一种是把react降到15之前（不包括15），另外一种就是把react-router升级到3.x以上版本。为什么不直接升级到4.x因为我试用了一下发现是服务端渲染，而且一大堆配套的都要升级，因此升级到3.x是最明智的选择。
+<img src="未装propTypes报错1.png" />
+<img src="未装propTypes报错2.png" />
 
 
 
