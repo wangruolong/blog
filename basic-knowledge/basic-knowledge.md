@@ -237,12 +237,22 @@ Git hooks made easy
 <img src="未开启modules.png" />
 <img src="开启modules.png" />
 
+## IP访问
+在package.json的执行脚本中增加`--host 0.0.0.0`就可以通过ip访问了，缺点是一开始启动的时候无法打开网页。
+也可以通过js获取本机ip
+<img src="获取ip.png" />
+
 # React
 ## react router
 未装propTypes报错`Cannot read property 'array' of undefined`
 react15之后prop-types被剥离开来，而react-router里面的很多写法还是react.proptypes这样肯定报错。所以有两种方案，一种是把react降到15之前（不包括15），另外一种就是把react-router升级到3.x以上版本。为什么不直接升级到4.x因为我试用了一下发现是服务端渲染，而且一大堆配套的都要升级，因此升级到3.x是最明智的选择。
 <img src="未装propTypes报错1.png" />
 <img src="未装propTypes报错2.png" />
+
+## redux saga
+当我dispatch一个action后，这个先发到reducer
+然后才走到saga，saga拿到后put了一个新的action这个新的action才是我们要处理的。
+简单来说，当我们dispatch一个action后，先发到reducer，然后saga同时也收到了一份，这时候saga可以put出新的action给reducer接收。
 
 
 
