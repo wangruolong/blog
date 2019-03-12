@@ -242,6 +242,20 @@ Git hooks made easy
 也可以通过js获取本机ip
 <img src="获取ip.png" />
 
+## `file-loader`与`url-loader`
+- 区别
+  + 相同点：都可以用来加载资源文件。
+  + 不同点：`url-loader`可以设置小于指定大小的文件直接打包到js里面，减少请求次数。
+- 联系
+  + 当有文件超过`url-loader`指定的文件大小后，不会被打包到js里面，但是它就变成需要`file-loader`加载否则会报错。
+  + 把小图片打包到js里面减少请求次数各有利弊。优点：可以减少小图片的请求次数，降低网络IO的请求次数。缺点：图片会被转换成base64的格式和js一起打包进入会带出新的问题，就是这样会导致js越来越大，这样加载单个js可能需要的时长会更长。另外，base64的算法是把原来的数据每3位用4位替换，这样原来如果是1，就会变成4/3，相当于变大了4/3倍。
+  + 因此是否需要使用`url-loader`把小图片打包到js文件需要权衡后再做决定。把小图片打包到js需要做的牺牲就是js文件会变大。
+  + `file-loader`实现的是懒加载，只有在页面需要用到具体的元素才会加载，否则并不会加载。这样能提高整体的性能。
+- 核心用法
+  + `file-loader`的`publicPath`属性，用来指定访问的路径。
+  + `file-loader`的`outputPath`属性，用来指定打包输出的路径和访问的路径。建议使用outputPath属性，因为这个属性同时指定了打包输入和访问的路径，而`publicPath`只指定了访问的路径，如果你实际打包的路径不是这个就访问不到了。
+  + `url-loader`的`limit`属性，用来指定小于限定的字节(Byte)则打包到js文件里面，超过限定的字节(Byte)则需要`file-loader`加载。
+
 # React
 ## react router
 未装propTypes报错`Cannot read property 'array' of undefined`
