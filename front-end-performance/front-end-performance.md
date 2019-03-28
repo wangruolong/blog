@@ -102,3 +102,32 @@ module.exports = {
   }
 }
 ```
+
+### 分离 应用程序(app) 和 第三方库(vendor)
+- `venders`用来打包第三方库。但是如果只是配置这个，app.js并没有变小，因为这只是新打包了一个venders.js文件，本身和app.js没什么关联。
+- `venders`必须要配合`optimization.splitChunks`才能实现对app.js里面第三方库的分离。
+- `optimization.splitChunks`用来剥离充重复引用的包。简单来说就是把app.js和venders.js里面重复引用的包分离出来到common.js，然后在app.js和venders.js留下一个require入口指向common.js。举个例子：index.js中有a.js和b.js，然后a.js引入了xxx.js，b.js也引入了xxx.js，这样如果直接打包xxx.js会被打包两次，所以通过`optimization.splitChunks`的配置， xxx.js只被打包了一次。
+- 这样通过`venders`和`optimization.splitChunks`的配合就能把一个比较大的app.js文件变成app.js、venders.js、common.js这几个比较小的文件。
+
+```javascript
+entry: {
+		app: './src/index.js',
+		venders:['react-dom','iconv-lite','immutable','moment','crypto-js']
+	},
+optimization: {
+		splitChunks: {
+			cacheGroups: {
+				commons: {
+					name: 'vender',
+					chunks: 'initial',
+					minChunks: 2
+				}
+			}
+		}
+	},
+```
+
+### import方式的不一样
+- `import uniqBy from 'lodash/uniqBy'`：只引入了lodash里面的uniqBy方法。
+- `import { uniqBy} from 'lodash'`：先把lodash整个对象引入后，再引入uniqBy方法。
+最好是第一种不用引入lodash整个对象，只要把相关的函数引入就可以，这样体积可以小很多。
