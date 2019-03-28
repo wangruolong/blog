@@ -104,11 +104,12 @@ module.exports = {
 ```
 
 ### 分离 应用程序(app) 和 第三方库(vendor)
-- `venders`用来打包第三方库。但是如果只是配置这个，app.js并没有变小，因为这只是新打包了一个venders.js文件，本身和app.js没什么关联。
-- `venders`必须要配合`optimization.splitChunks`才能实现对app.js里面第三方库的分离。
-- `optimization.splitChunks`用来剥离充重复引用的包。简单来说就是把app.js和venders.js里面重复引用的包分离出来到common.js，然后在app.js和venders.js留下一个require入口指向common.js。举个例子：index.js中有a.js和b.js，然后a.js引入了xxx.js，b.js也引入了xxx.js，这样如果直接打包xxx.js会被打包两次，所以通过`optimization.splitChunks`的配置， xxx.js只被打包了一次。
-- 这样通过`venders`和`optimization.splitChunks`的配合就能把一个比较大的app.js文件变成app.js、venders.js、common.js这几个比较小的文件。
-
+- `venders`用来打包第三方库。但是如果只是配置这个，`app.js`并没有变小，因为这个配置只是新打包了一个`venders.js`文件，本身和`app.js`没什么关联。
+- `venders`必须要配合`optimization.splitChunks`才能实现对`app.js`里面第三方库的分离。
+- `optimization.splitChunks`用来剥离充重复引用的包。简单来说就是把`app.js`和`venders.js`里面共同引用的包分离出来到`common.js`，然后在`app.js`和`venders.js`留下一个require入口指向`common.js`。举个例子：`index.js`中有`a.js`和`b.js`，然后`a.js`引入了`xxx.js`，`b.js`也引入了`xxx.js`。这样如果直接打包`xxx.js`就会被打包两次，所以通过`optimization.splitChunks`的配置， `xxx.js`被抽取出来打包到了`common.js`里面，而原来`a.js`和`b.js`的`import`地方只留下了一个require入口指向`common.js`
+- 这样通过`venders`和`optimization.splitChunks`的配合就能把一个比较大的`app.js`文件变成`app.js`、`venders.js`、`common.js`这几个比较小的文件。
+- 需要特别注意的是如果`venders`里面有，但是`app`却没有，那么这样`splitChunks`就不会生效，最终的结果就是导致`venders`变大。比如在`app`里面是`import uniqBy from 'lodash/uniqBy'`但是在`venders`里面直接配置`venders:['lodash']`这样的做其实是直接`import from 'lodash'`，`app.js`里面并不是这样引入的它只是引入了lodash其中某个方法，那么`splitChunks`会认为这两个包没有重复。最终的结果就是打包了`lodash/uniqBy`然后也打包了`lodash`。
+- 还有，像`redux-devtools-dock-monitor`这种包也是最好不要放入`venders`，因为一般情况下`redux-devtools-dock-monitor`这个只会在开发环境下使用，正式发布的时候一般都会去掉。这样子正式环境在使用的时候，由于`splitChunks`在`app.js`里面没有找到`redux-devtools-dock-monitor`导致`venders.js`里面多打了这个包进来。
 ```javascript
 entry: {
 		app: './src/index.js',
