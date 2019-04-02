@@ -14,6 +14,10 @@ tags:
 # Node.js
 
 - `Node.js` 中，`__dirname` 总是指向被执行js文件的绝对路径。
+```js
+console.info('process.cwd()是当前进程的工作目录，参照package.json所在的位置的。',process.cwd())
+console.info('__dirname是当前js文件所处的路径。',__dirname)
+```
 
 # path
 要使用`path`需要先`npm install path`，然后再在需要的文件里面引入`const path = require('path');`才可以使用。
@@ -47,7 +51,9 @@ console.log(myPath);    //D:\myProgram\test\img\so
 console.log(myPath2);   //D:\myProgram\test\img\so
 console.log(myPath3);   //D:\img\so
 console.log(myPath4);   //D:\myProgram\test\img\so
+
 ```
+
 
 # ES6
 任何人都可以向标准委员会（又称 TC39 委员会）提案，要求修改语言标准。
@@ -182,7 +188,7 @@ $ npm install --save-dev babel-preset-stage-3
   },
   "rules": {
     "indent": ["error", "tab"],
-    "linebreak-style": ["error", "windows"],
+    "linebreak-style": ["error", "windows"],//注意，这里最好去掉，因为windows和UNIX系统的换行符是不一样的。
     "quotes": ["error", "single"],
     "semi": ["error", "never"]
   }
@@ -282,7 +288,7 @@ Git hooks made easy
 }
 ```
 # webpack
-## 样式表的Loader`style-loader ``css-loader``sass-loader`
+## 样式表的Loader `style-loader ` `css-loader` `sass-loader`
 - style-loader把css放到<styles/>里面，而css-Loader则是把css通过<link/>引入。
 - 启用MiniCssExtractPlugin.loader会把css进行压缩。
 - `css-loader`要启用modules=true，在代码里面才能import styles from 'style.css'。同时设置localIdentName规则把css的名称进行干扰，防止全名冲突。
