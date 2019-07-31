@@ -12,46 +12,43 @@ tags:
 
 <!-- more -->
 
-# 算法
-## Fisher-Yates shuffle算法
+# 1 算法
+## 1.1 Fisher-Yates shuffle算法
 - 算法描述：该算法是用来打乱数组的顺序。
 - 实现描述：简单来说就是从左往右循环数组的每个项，每次把当前项和当前项之后的项（包括当前项）随机选择一个进行交换，但是如果随机到自己则不进行交换。
 - 复杂度：
 - 具体实现：
-```js
-  shuffle(array){
-    const endIndex = array.length - 1//最后一位只能选到自己，自己和自己不交换，所以最后一位就不考虑，所以把数组的长度减去1。
-    for (let i = 0; i <= endIndex; i++){
-        //从当前位置之后（包括当前位置）随机取一个值进行交换。
-        const j = i + Math.floor(Math.random() * (array.length - i));
-        //es6解构赋值
-        [array[i], array[j]] = [array[j], array[i]]
+  ```js
+    shuffle(array){
+      const endIndex = array.length - 1//最后一位只能选到自己，自己和自己不交换，所以最后一位就不考虑，所以把数组的长度减去1。
+      for (let i = 0; i <= endIndex; i++){
+          //从当前位置之后（包括当前位置）随机取一个值进行交换。
+          const j = i + Math.floor(Math.random() * (array.length - i));
+          //es6解构赋值
+          [array[i], array[j]] = [array[j], array[i]]
+      }
+      return array
     }
-    return array
-  }
-```
+  ```
+  <img src="shuffle算法.jpg" />
 
-<img src="shuffle算法.jpg" />
+## 1.2 九宫格行坐标`colIndex`列坐标`rowIndex`和宫序号`boxIndex`宫内序号`cellIndex`的互相转换
+  1. 行列坐标转换成宫序号和宫内序号
+     - 宫坐标（Gx,Gy）。宫坐标的规律是，Gx是横坐标每3格＋1,Gy是纵坐标每3格＋1，所以要(col,row)转换成(Gx,Gy)就是把col和row分别/3取整，表示间隔了几次3格，得到的值就是（Gx,Gy）。
+   ((col/3),（row/3）)
+     - 宫序号boxIndex。我们把每个九宫格看成是一格，可以得出Gx每＋1就代表多1个九宫格，Gy每＋1就代表多3个九宫格。所以要计算宫序号，只要Gx＋Gy×3得到的值就是序号。
+   (col/3)＋（row/3）×3
+     - 宫内格坐标。每3×3=9格是一个九宫格，图中总共有9个九宫格，然后每个九宫格都有自己的坐标从(0,0)-(2,2)。简单来说就是每隔3格，单元格的坐标就要重新计算。也就是说行列坐标对3求余表示当前的坐标遇3归0后剩下的值就是单元格的坐标。
+   ((colIndex%3),(rowIndex%3))
+     - 宫内序号cellIndex。每个九宫格都是一个独立的数组，要把九宫格里面的坐标转换成序号也是类似的。横坐标＋1表示单元格序号＋1，纵坐标+1表示单元格的序号+3。
+   (colIndex%3)＋(rowIndex%3)×3
 
-## 九宫格行坐标`colIndex`列坐标`rowIndex`和宫序号`boxIndex`宫内序号`cellIndex`的互相转换
-1. 行列坐标转换成宫序号和宫内序号
-
-  - 宫坐标（Gx,Gy）。宫坐标的规律是，Gx是横坐标每3格＋1,Gy是纵坐标每3格＋1，所以要(col,row)转换成(Gx,Gy)就是把col和row分别/3取整，表示间隔了几次3格，得到的值就是（Gx,Gy）。
-((col/3),（row/3）)
-  - 宫序号boxIndex。我们把每个九宫格看成是一格，可以得出Gx每＋1就代表多1个九宫格，Gy每＋1就代表多3个九宫格。所以要计算宫序号，只要Gx＋Gy×3得到的值就是序号。
-(col/3)＋（row/3）×3
-  - 宫内格坐标。每3×3=9格是一个九宫格，图中总共有9个九宫格，然后每个九宫格都有自己的坐标从(0,0)-(2,2)。简单来说就是每隔3格，单元格的坐标就要重新计算。也就是说行列坐标对3求余表示当前的坐标遇3归0后剩下的值就是单元格的坐标。
-((colIndex%3),(rowIndex%3))
-  - 宫内序号cellIndex。每个九宫格都是一个独立的数组，要把九宫格里面的坐标转换成序号也是类似的。横坐标＋1表示单元格序号＋1，纵坐标+1表示单元格的序号+3。
-(colIndex%3)＋(rowIndex%3)×3
-
-2. 宫序号和宫内序号转换成行列坐标
-
-   - 因为Gx=col/3,Gy=row/3；所以col=Gx×3，row=Gy×3；(Gx×3,Gy×3)只是这个宫的左上角的坐标。根据宫内序号cellIndex可以得到cellIndex%3是宫内横坐标，cellIndex/3是宫内纵坐标。把宫内序号cellIndex代入可得((Gx×3＋cellIndex%3),(Gy×3＋cellIndex/3))。接下来根据宫序号boxIndex可以得到boxIndex%3是横坐标Gx，boxIndex/3是纵坐标Gy。最终用宫序号和宫内序号表示坐标。((boxIndex%3×3＋cellIndex%3),(boxIndex/3×3＋cellIndex/3))
+  2. 宫序号和宫内序号转换成行列坐标
+     - 因为Gx=col/3,Gy=row/3；所以col=Gx×3，row=Gy×3；(Gx×3,Gy×3)只是这个宫的左上角的坐标。根据宫内序号cellIndex可以得到cellIndex%3是宫内横坐标，cellIndex/3是宫内纵坐标。把宫内序号cellIndex代入可得((Gx×3＋cellIndex%3),(Gy×3＋cellIndex/3))。接下来根据宫序号boxIndex可以得到boxIndex%3是横坐标Gx，boxIndex/3是纵坐标Gy。最终用宫序号和宫内序号表示坐标。((boxIndex%3×3＋cellIndex%3),(boxIndex/3×3＋cellIndex/3))
 
 <img src="九宫格.png" />
 
-# Node.js
+# 2 Node.js
 
 - `Node.js` 中，`__dirname` 总是指向被执行js文件的绝对路径。
 ```js
@@ -59,7 +56,7 @@ console.info('process.cwd()是当前进程的工作目录，参照package.json�
 console.info('__dirname是当前js文件所处的路径。',__dirname)
 ```
 
-# path
+# 3 path
 要使用`path`需要先`npm install path`，然后再在需要的文件里面引入`const path = require('path');`才可以使用。
 两种用法：
 1. 连接路径：path.join([path1][, path2][, ...])
@@ -94,7 +91,7 @@ console.log(myPath4);   //D:\myProgram\test\img\so
 
 ```
 
-# ES6
+# 4 ES6
 - ES6的几个阶段
 任何人都可以向标准委员会（又称 TC39 委员会）提案，要求修改语言标准。
 一种新的语法从提案到变成正式标准，需要经历五个阶段。每个阶段的变动都需要由 TC39 委员会批准。
@@ -108,67 +105,129 @@ Stage 4 - Finished（定案阶段）
 - 在SwitchCase的case中如果没有{}
   当词法声明 (let、const、function 和 class) 出现在 case或default 子句中。该词法声明的变量在整个 switch 语句块中是可见的，但是它只有在运行到它定义的 case 语句时，才会进行初始化操作。为了保证词法声明语句只在当前 case 语句中有效，需要用大括号`{}`将你子句包裹在块中。
 
-# babel
-Babel 的配置文件是`.babelrc`，存放在项目的根目录下。使用 Babel 的第一步，就是配置这个文件。
-该文件用来设置转码规则和插件，基本格式如下。
-
-```json
-{
-  "presets": [],
-  "plugins": []
-}
-```
+# 5 babel
+    Babel 的配置文件是`.babelrc`，存放在项目的根目录下。使用 Babel 的第一步，就是配置这个文件。
+    该文件用来设置转码规则和插件，基本格式如下。
+    {
+      "presets": [],
+      "plugins": []
+    }
 
 ##  `presets`
-`presets`字段设定转码规则，官方提供以下的规则集，你可以根据需要安装。
+    `presets`字段设定转码规则，官方提供以下的规则集，你可以根据需要安装。
+    # 最新转码规则
+    $ npm install --save-dev babel-preset-latest
 
-```
-# 最新转码规则
-$ npm install --save-dev babel-preset-latest
+    # react 转码规则
+    $ npm install --save-dev babel-preset-react
 
-# react 转码规则
-$ npm install --save-dev babel-preset-react
+    # 不同阶段语法提案的转码规则（共有4个阶段），选装一个
+    # Stage 0 - Strawman（展示阶段）
+    # Stage 1 - Proposal（征求意见阶段）
+    # Stage 2 - Draft（草案阶段）
+    # Stage 3 - Candidate（候选人阶段）
+    # Stage 4 - Finished（定案阶段）
+    $ npm install --save-dev babel-preset-stage-0
+    $ npm install --save-dev babel-preset-stage-1
+    $ npm install --save-dev babel-preset-stage-2
+    $ npm install --save-dev babel-preset-stage-3
 
-# 不同阶段语法提案的转码规则（共有4个阶段），选装一个
-# Stage 0 - Strawman（展示阶段）
-# Stage 1 - Proposal（征求意见阶段）
-# Stage 2 - Draft（草案阶段）
-# Stage 3 - Candidate（候选人阶段）
-# Stage 4 - Finished（定案阶段）
-$ npm install --save-dev babel-preset-stage-0
-$ npm install --save-dev babel-preset-stage-1
-$ npm install --save-dev babel-preset-stage-2
-$ npm install --save-dev babel-preset-stage-3
-```
-```json
-{
-  "presets": [
-    "env",
-    "es2015",
-    "react",
-    "stage-2"
-  ]
-}
-```
-如果presets没有设置`stage-2`，因为这里面有些语法还在`stage-2`阶段还没有正式发布，所以如果没有加上这个配置就无法解析这种语法。
-<img src="presets没有设置stage-2.png" />
+    {
+      "presets": [
+        "env",
+        "es2015",
+        "react",
+        "stage-2"
+      ]
+    }
 
+    如果presets没有设置`stage-2`，因为这里面有些语法还在`stage-2`阶段还没有正式发布，所以如果没有加上这个配置就无法解析这种语法。
+  <img src="presets没有设置stage-2.png" />
+
+### `presets`打包优化
+    {
+      "presets": [
+        ["env",{
+          "modules": false,// 模块化交给webpack处理
+          "useBuiltIns":"usage",// "usage" | "entry" | false, defaults to false.
+          "targets": {"browsers": ["safari >= 7", "ie>=8"]}
+        }],
+        "react",
+        "stage-2"
+      ],
+      "plugins": [
+        "add-module-exports",// 转义import和export
+        "transform-runtime",// 转义generator
+        "transform-decorators-legacy",// 转义@
+        "transform-es3-member-expression-literals",// 支持ie
+        "transform-es3-property-literals",// 支持ie
+        ["transform-es2015-classes", { "loose": true }],
+        "transform-proto-to-assign"
+      ]
+    }
+    // 是否可以只用useBuiltIns+babel-polyfill不用transform-runtime？不行。一个典型的场景就是前者没有转义generator，后者有对静态的generator做转义。
+
+    env     useBuiltIns
+    false   11165  907KB
+    usage   8136   674KB
+    entry   8136   674KB
+
+    transform-runtime
+    default 2119   168KB
 
 ## `plugins`
+    {
+      "plugins": [
+          "add-module-exports",// 转义import和export
+        "transform-runtime",// 转义generator
+        "transform-decorators-legacy",// 转义@
+        "transform-class-properties",// 转义class
+        "transform-es3-member-expression-literals",// 支持ie
+        "transform-es3-property-literals"// 支持ie
+      ]
+    }
 
 `plugins`字段设定插件
-- 当项目启用generate的时候报错`regeneratorRuntime is not defined`，则需要安装`babel-plugin-transform-runtime`插件
-- transform-decorators-legacy
-- add-module-exports
-```json
-{
-  "plugins": [
-    "add-module-exports",
-    "transform-runtime"
-    "transform-decorators-legacy",
-  ]
-}
-```
+- 配置`transform-runtime`
+  - 作用：支持generator。当项目启用generate的时候如果没有这个插件会报错`regeneratorRuntime is not defined`。
+  - 安装：`"babel-plugin-transform-runtime": "^6.23.0"`
+- 配置`transform-decorators-legacy`
+  - 作用：支持@语法
+  - 安装：`"babel-plugin-transform-decorators-legacy": "^1.3.5"`
+- 配置`add-module-exports`
+  - 作用：支持import和export语法
+  - 安装：`"babel-plugin-add-module-exports": "^1.0.0"`
+- 配置`transform-class-properties`
+  - 作用：有时候我们将 defaultProps, propTypes写在class中，而不是分开写，可以使用这个插件支持。
+    ```jsx
+    class App extends React.Component {
+      static propTypes = {
+        num: React.PropTypes.number.isRequired,
+        val: React.PropTypes.string.isRequired
+      }
+      static defaultProps = {
+        num: 1,
+        val: "hello React"
+      }
+      // ...
+    }
+    ```
+  - 安装：`"babel-plugin-transform-class-properties": "^6.24.1"`
+
+- 配置`transform-es3-member-expression-literals` `transform-es3-property-literals`
+  - 作用：像下面这种代码
+    ```js
+    function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+    module.exports = _main2.default;
+    ```
+    在 IE8 下会直接报”缺少标识符、字符串或数字”的错。我们得在对象的属性上加 '' 才可以。就像下面这样：
+    ```js
+    function _interopRequireDefault(obj) {
+      return obj && obj.__esModule ? obj : { 'default': obj };
+    }
+    ```
+    至于原因，并不是 IE8 下对象的属性必须得加 '' 才行，而是 default 的问题，作为一个关键字，同样的问题还包括 catch。这两种情况，可以通过使用`transform-es3-property-literals`和`transform-es3-member-expression-literals`这两个插件搞定。总之，在平时写代码的时候避免使用关键字，或者保留字作为对象的属性值，尤其是在习惯不加引号的情况下。相关讨论：[Allow reserved words for properties](https://github.com/airbnb/javascript/issues/61)
+  - 安装：`"babel-plugin-transform-es3-member-expression-literals": "^6.22.0"` `"babel-plugin-transform-es3-property-literals": "^6.22.0",`
 
 ## 在webpack中
 `Using removed Babel 5 option`报错使用了被移除的babel5中的语法，是因为没有把`node_modules`排除掉。目录是相对package.json的路径。
@@ -186,7 +245,8 @@ $ npm install --save-dev babel-preset-stage-3
 ```
 <img src="未exclude导致的babel报错.png" />
 
-# eslint
+
+# 6 eslint
 - package.json
 ```json
 {
@@ -330,7 +390,8 @@ Git hooks made easy
     "env": {}
 }
 ```
-# webpack
+# 7 webpack
+
 ## 样式表的Loader `style-loader ` `css-loader` `sass-loader`
 - style-loader把css放到<styles/>里面，而css-Loader则是把css通过<link/>引入。
 - 启用MiniCssExtractPlugin.loader会把css进行压缩。
@@ -366,7 +427,8 @@ Git hooks made easy
   + `file-loader`的`outputPath`属性，用来指定打包输出的路径和访问的路径。建议使用outputPath属性，因为这个属性同时指定了打包输入和访问的路径，而`publicPath`只指定了访问的路径，如果你实际打包的路径不是这个就访问不到了。
   + `url-loader`的`limit`属性，用来指定小于限定的字节(Byte)则打包到js文件里面，超过限定的字节(Byte)则需要`file-loader`加载。
 
-# React
+
+# 8 React
 ## react router
 未装propTypes报错`Cannot read property 'array' of undefined`
 react15之后prop-types被剥离开来，而react-router里面的很多写法还是react.proptypes这样肯定报错。所以有两种方案，一种是把react降到15之前（不包括15），另外一种就是把react-router升级到3.x以上版本。为什么不直接升级到4.x因为我试用了一下发现是服务端渲染，而且一大堆配套的都要升级，因此升级到3.x是最明智的选择。
