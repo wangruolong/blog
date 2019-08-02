@@ -445,19 +445,36 @@ react15之后prop-types被剥离开来，而react-router里面的很多写法还
 
 
 
-- React中对XSS如何进行XSS攻击和防范
-- 依赖倒置，依赖抽象而不是具体实现
-- 控制反转，依赖注入和依赖查找
+# React中对XSS如何进行XSS攻击和防范
+
+# 面向对象设计七大原则
+## 简单，单一，尽量少互相依赖，可扩展不可修改，尽量组合。
+- 单一职责原则（Single Responsibility Principle）每一个类应该专注于做一件事情。
+- 接口隔离原则（Interface Segregation Principle）应当为客户端提供尽可能小的单独的接口，而不是提供大的总的接口。
+- 迪米特法则（Law Of Demeter）又叫最少知识原则，一个软件实体应当尽可能少的与其他实体发生相互作用。
+- 组合/聚合复用原则（Composite/Aggregate Reuse Principle CARP）尽量使用合成/聚合达到复用，尽量少用继承。原则： 一个类中有另一个类的对象。
+- 开闭原则（Open Close Principle）面向扩展开放，面向修改关闭。
+
+## 依赖抽象不要依赖具体，用基类定义子类替换，
+- 依赖倒置原则（Dependence Inversion Principle）实现尽量依赖抽象，不依赖具体实现。
+- 里氏替换原则（Liskov Substitution Principle）超类存在的地方，子类是可以替换的。
+
+
+# 控制反转包括依赖注入和依赖查找
+- 控制反转就是把原来自己控制的权限转交给外部控制的过程叫做控制反转，也叫控制转移。
+- 依赖注入就是把控制权转交出去，依赖查找就是外部容器控制这个对象。
+
+# 设计模式
 - setTimeout()，newPromise()
 - 浏览器事件循环，队列优先级不同
 - 串行执行Promise
 - async/await
-- 设计模式
 - 项目中最难的问题如何解决
 - PWA（service worker，IndexedDB，manifest，push notification）
 - 测试框架
 - Typescript
 - css基础：position
+  flex布局
 - JS基础
 - 怎么理解多线程
 - await和sleep区别
@@ -465,3 +482,28 @@ react15之后prop-types被剥离开来，而react-router里面的很多写法还
 - 英文阅读
 - Android线程通信
 - 项目框架
+  webpack 
+
+# 状态码
+  n200 OK，当GET请求成功完成，DELETE或者PATCH请求同步完成。
+  n201 Created，对于那些要服务器创建对象的请求来说，资源已创建完毕。
+  n202 Accepted，POST，DELETE或者PATCH请求提交成功，稍后将异步的进行处理。
+  n204 No Content，Response中包含一些Header和一个状态行， 但不包括实体的主题内容（没有response body）
+  n304 Not Modified，客户的缓存资源是最新的， 要客户端使用缓存
+
+  n400 Bad Request
+  require_argument 缺少参数
+  invalid_argument 无效参数
+  n401 Unauthorized: 请求失败，因为用户没有进行认证
+  auth_token_expired 授权已过期
+  auth_invalid_token 无效的授权(如token不存在、需要mac签名、mac签名无效、nonce无效、重复提交等)
+  n403 Forbidden: 请求失败，因为用户被认定没有访问特定资源的权限
+  auth_denied 授权受限（无权限或IP地址受限等）
+  n405 Method Not Allowed：不支持该 Request 的方法
+  n406 Not Acceptable：请求的资源的内容特性无法满足请求头中的条件，因而无法生成响应实体。
+  n415 Unsupported Media Type: 对于当前请求的方法和所请求的资源，请求中提交的实体并不是服务器中所支持的格式，因此请求被拒绝。
+  n429 Too Many Requests: 请求频率超配，稍后再试。
+  n500 Internal Server Error: 服务器遇到一个错误，使其无法为请求提供服务
+  n501 Not Implemented：客户端发起的请求超出服务器的能力范围(比如，使用了服务器不支持的请求方法)时，使用此状态码。
+  n502 Bad Gateway：代理使用的服务器遇到了上游的无效响应
+  n503 Service Unavailable：服务器目前无法为请求提供服务，但过一段时间就可以恢复服务
