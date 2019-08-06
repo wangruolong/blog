@@ -12,8 +12,12 @@ tags:
 
 <!-- more -->
 
-# 1 算法
-## 1.1 Fisher-Yates shuffle算法
+#  算法
+## 快速排序
+## 选择排序
+## 堆排序
+
+## Fisher-Yates shuffle算法
 - 算法描述：该算法是用来打乱数组的顺序。
 - 实现描述：简单来说就是从左往右循环数组的每个项，每次把当前项和当前项之后的项（包括当前项）随机选择一个进行交换，但是如果随机到自己则不进行交换。
 - 复杂度：
@@ -48,15 +52,14 @@ tags:
 
 <img src="九宫格.png" />
 
-# 2 Node.js
-
+# Node.js
+## __dirname
 - `Node.js` 中，`__dirname` 总是指向被执行js文件的绝对路径。
 ```js
 console.info('process.cwd()是当前进程的工作目录，参照package.json所在的位置的。',process.cwd())
 console.info('__dirname是当前js文件所处的路径。',__dirname)
 ```
-
-# 3 path
+## path
 要使用`path`需要先`npm install path`，然后再在需要的文件里面引入`const path = require('path');`才可以使用。
 两种用法：
 1. 连接路径：path.join([path1][, path2][, ...])
@@ -67,7 +70,6 @@ var path = require('path');
 path.join('/foo', 'bar', 'baz/asdf', 'quux', '..')
 // 连接后
 '/foo/bar/baz/asdf'
-
 path.resolve('/foo/bar', './baz')
 // 输出结果为
 '/foo/bar/baz'
@@ -91,7 +93,7 @@ console.log(myPath4);   //D:\myProgram\test\img\so
 
 ```
 
-# 4 ES6
+# ES6
 - ES6的几个阶段
 任何人都可以向标准委员会（又称 TC39 委员会）提案，要求修改语言标准。
 一种新的语法从提案到变成正式标准，需要经历五个阶段。每个阶段的变动都需要由 TC39 委员会批准。
@@ -105,7 +107,7 @@ Stage 4 - Finished（定案阶段）
 - 在SwitchCase的case中如果没有{}
   当词法声明 (let、const、function 和 class) 出现在 case或default 子句中。该词法声明的变量在整个 switch 语句块中是可见的，但是它只有在运行到它定义的 case 语句时，才会进行初始化操作。为了保证词法声明语句只在当前 case 语句中有效，需要用大括号`{}`将你子句包裹在块中。
 
-# 5 babel
+# Babel
     Babel 的配置文件是`.babelrc`，存放在项目的根目录下。使用 Babel 的第一步，就是配置这个文件。
     该文件用来设置转码规则和插件，基本格式如下。
     {
@@ -246,7 +248,7 @@ Stage 4 - Finished（定案阶段）
 <img src="未exclude导致的babel报错.png" />
 
 
-# 6 eslint
+# Eslint
 - package.json
 ```json
 {
@@ -298,7 +300,7 @@ Stage 4 - Finished（定案阶段）
 }
 
 ```
-## webpack.js
+## 在webpack中
 `eslint-loader`用于webpack的配置。
 ```js
 module: {
@@ -390,7 +392,7 @@ Git hooks made easy
     "env": {}
 }
 ```
-# 7 webpack
+# webpack
 
 ## 样式表的Loader `style-loader ` `css-loader` `sass-loader`
 - style-loader把css放到<styles/>里面，而css-Loader则是把css通过<link/>引入。
@@ -428,7 +430,9 @@ Git hooks made easy
   + `url-loader`的`limit`属性，用来指定小于限定的字节(Byte)则打包到js文件里面，超过限定的字节(Byte)则需要`file-loader`加载。
 
 
-# 8 React
+# React
+## React中对XSS如何进行XSS攻击和防范
+
 ## react router
 未装propTypes报错`Cannot read property 'array' of undefined`
 react15之后prop-types被剥离开来，而react-router里面的很多写法还是react.proptypes这样肯定报错。所以有两种方案，一种是把react降到15之前（不包括15），另外一种就是把react-router升级到3.x以上版本。为什么不直接升级到4.x因为我试用了一下发现是服务端渲染，而且一大堆配套的都要升级，因此升级到3.x是最明智的选择。
@@ -440,51 +444,54 @@ react15之后prop-types被剥离开来，而react-router里面的很多写法还
 然后才走到saga，saga拿到后put了一个新的action这个新的action才是我们要处理的。
 简单来说，当我们dispatch一个action后，先发到reducer，然后saga同时也收到了一份，这时候saga可以put出新的action给reducer接收。
 
+# 设计领域
 
+## 控制反转
+- 控制反转就是把原来自己控制的权限转交给外部控制的过程叫做控制反转，也叫控制转移。
+- 依赖注入就是把控制权转交出去，依赖查找就是外部容器控制这个对象。
+  
+```javascript
+class IoC {
+    constructor() {
+        this.context = {}
+    }
+    static getInstance() {
+        if (!this.instance) {
+            this.instance = new IoC()
+        }
+        return this.instance
+    }
+    injection(key, component) {
+        this.context[key] = component
+    }
+    lookup(key) {
+        return this.context[key]
+    }
+}
+```
 
+## 面向切面
+- 
 
+## 设计模式
+- 单例模式。由于所有的组件都要互相通讯，所以必须保证所有的组件都在同一个容器中，所以使用单例模式创建IoC容器。
+- 
 
-
-# React中对XSS如何进行XSS攻击和防范
-
-# 面向对象设计七大原则
-## 简单，单一，尽量少互相依赖，可扩展不可修改，尽量组合。
+## 设计原则
+### 简单，单一，尽量少互相依赖，可扩展不可修改，尽量组合。
 - 单一职责原则（Single Responsibility Principle）每一个类应该专注于做一件事情。
 - 接口隔离原则（Interface Segregation Principle）应当为客户端提供尽可能小的单独的接口，而不是提供大的总的接口。
 - 迪米特法则（Law Of Demeter）又叫最少知识原则，一个软件实体应当尽可能少的与其他实体发生相互作用。
 - 组合/聚合复用原则（Composite/Aggregate Reuse Principle CARP）尽量使用合成/聚合达到复用，尽量少用继承。原则： 一个类中有另一个类的对象。
 - 开闭原则（Open Close Principle）面向扩展开放，面向修改关闭。
-
-## 依赖抽象不要依赖具体，用基类定义子类替换，
+### 依赖抽象不要依赖具体，用基类定义子类替换，
 - 依赖倒置原则（Dependence Inversion Principle）实现尽量依赖抽象，不依赖具体实现。
 - 里氏替换原则（Liskov Substitution Principle）超类存在的地方，子类是可以替换的。
+ 
 
-
-# 控制反转包括依赖注入和依赖查找
-- 控制反转就是把原来自己控制的权限转交给外部控制的过程叫做控制反转，也叫控制转移。
-- 依赖注入就是把控制权转交出去，依赖查找就是外部容器控制这个对象。
-
-# 设计模式
-- setTimeout()，newPromise()
-- 浏览器事件循环，队列优先级不同
-- 串行执行Promise
-- async/await
-- 项目中最难的问题如何解决
-- PWA（service worker，IndexedDB，manifest，push notification）
-- 测试框架
-- Typescript
-- css基础：position
-  flex布局
-- JS基础
-- 怎么理解多线程
-- await和sleep区别
-- 数据库同步，升级
-- 英文阅读
-- Android线程通信
-- 项目框架
-  webpack 
-
-# 状态码
+ 
+# 其他
+## 状态码
   n200 OK，当GET请求成功完成，DELETE或者PATCH请求同步完成。
   n201 Created，对于那些要服务器创建对象的请求来说，资源已创建完毕。
   n202 Accepted，POST，DELETE或者PATCH请求提交成功，稍后将异步的进行处理。
@@ -507,3 +514,31 @@ react15之后prop-types被剥离开来，而react-router里面的很多写法还
   n501 Not Implemented：客户端发起的请求超出服务器的能力范围(比如，使用了服务器不支持的请求方法)时，使用此状态码。
   n502 Bad Gateway：代理使用的服务器遇到了上游的无效响应
   n503 Service Unavailable：服务器目前无法为请求提供服务，但过一段时间就可以恢复服务
+
+
+
+
+
+
+- react渲染优化、长列表优化、重复渲染优化
+- 前端性能优化、PWA（service worker，IndexedDB，manifest，push notification）
+- 单元测试框架
+
+- setTimeout()，newPromise()
+- 浏览器事件循环，队列优先级不同
+- 串行执行Promise
+- async/await、await和sleep区别
+- 项目中最难的问题如何解决
+- 测试框架
+- Typescript
+- JS基础
+- 怎么理解多线程
+- 数据库同步，升级
+- 英文阅读
+- Android线程通信
+- css基础：position
+  flex布局
+- 项目框架
+  webpack 
+
+

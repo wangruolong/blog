@@ -11,6 +11,26 @@ tags:
 前端性能优化。
 
 <!-- more -->
+## 资源压缩与合并
+- html压缩
+- css压缩
+- js压缩
+- 文件合并和拆分
+## 图片相关的优化
+- 压缩图片
+- 雪碧图SpritesmithPlugin
+- image inline
+- 通过url-loader和file-loader来配合使用。构建工具通过url-loader来优化项目中对于资源的引用路径，并设定大小限制，当资源的体积小于limit时将其直接进行Base64转换后嵌入引用文件，体积大于limit时可通过fallback参数指定的loader进行处理。
+- 先用一张极小的图片来代替，等到内容加载完了，再向服务器请求真正的图片并替换，可以有效的减少等待时间。
+
+
+## css和js的装载与执行
+## 懒加载和预加载
+## 重绘与回流
+- 回流必定触发重绘，而重绘不一定触发回流。
+## 浏览器存储cookies localstorage sessionstorage indexedDB
+## 缓存
+
 
 ## webpack
 - 压缩
@@ -104,6 +124,7 @@ module.exports = {
 ```
 
 ### 分离 应用程序(app) 和 第三方库(vendor)
+- 避免缓存大面积失效
 - `venders`用来打包第三方库。但是如果只是配置这个，`app.js`并没有变小，因为这个配置只是新打包了一个`venders.js`文件，本身和`app.js`没什么关联。
 - `venders`必须要配合`optimization.splitChunks`才能实现对`app.js`里面第三方库的分离。
 - `optimization.splitChunks`用来剥离充重复引用的包。简单来说就是把`app.js`和`venders.js`里面共同引用的包分离出来到`common.js`，然后在`app.js`和`venders.js`留下一个require入口指向`common.js`。举个例子：`index.js`中有`a.js`和`b.js`，然后`a.js`引入了`xxx.js`，`b.js`也引入了`xxx.js`。这样如果直接打包`xxx.js`就会被打包两次，所以通过`optimization.splitChunks`的配置， `xxx.js`被抽取出来打包到了`common.js`里面，而原来`a.js`和`b.js`的`import`地方只留下了一个require入口指向`common.js`
