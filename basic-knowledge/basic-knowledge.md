@@ -394,6 +394,8 @@ Git hooks made easy
 ```
 # webpack
 
+## webpack性能优化（详见性能优化图片相关的优化）
+
 ## 样式表的Loader `style-loader ` `css-loader` `sass-loader`
 - style-loader把css放到<styles/>里面，而css-Loader则是把css通过<link/>引入。
 - 启用MiniCssExtractPlugin.loader会把css进行压缩。
@@ -444,12 +446,49 @@ react15之后prop-types被剥离开来，而react-router里面的很多写法还
 然后才走到saga，saga拿到后put了一个新的action这个新的action才是我们要处理的。
 简单来说，当我们dispatch一个action后，先发到reducer，然后saga同时也收到了一份，这时候saga可以put出新的action给reducer接收。
 
+## react性能优化
+### 消耗内存的优化。render里面尽量减少新建变量和bind函数，传递参数是尽量减少传递参数的数量。
+- onClick={this.handleClick}构造函数每一次渲染的时候只会执行一遍；这种方法最好。
+- onClick={this.handleClick.bind(this)}在每次render()的时候都会重新执行一遍函数。
+- onClick={()=>{this.handleClick()}}每一次render()的时候，都会生成一个新的箭头函数，即使两个箭头函数的内容是一样的。
+### 多次render的优化。合理使用container和dump
+- 有些组件的数据都是从父组件一直传递到子组件，这样当父组件渲染的时候，子组件也会跟着渲染。所以比如list，dialog等类型的组件我都是让在redux里面，然后container进行connect。只有这些变化的时候才会重新render，否则父组件重新render也不会让子组件重新render因为，子组件的props都没有变化。
+### 多次render的优化。定制shouldComponentUpdate函数
+- shouldComponentUpdate(nextProps,nextState) false不render，true才render。如果啥也不反悔默认返回true。
+- 在最新的react中，react给我们提供了React.PureComponent，官方也在早期提供了名为react-addons-pure-render-mixin插件来重新实现shouldComponentUpdate生命周期方法。
+### 消耗CPU的优化。immutable与with-immutable-props-to-js
+- （建议使用seamless-immutable）
+- javascript中的对象一般都是可变的，因为使用了引用赋值，新的对象简单的引用了原始对象，改变新对象将影响到原始对象。这样做非常的昂贵，对cpu和内存会造成浪费。
+### 消耗CPU的优化。针对react的diff算法加入key，防止最坏情况的发生
+- react为了追求高性能，采用了时间复杂度为O(N)来比较两个属性结构的区别。传统的比较两个树形结构，需要通过O(N^3)，这样性能很低。
+- 两个节不一样最坏时间复杂度。O(N)的最坏时间复杂度。也就是说避免这种情况：组件A`<div><Todos /></div>`和组件B`<span><Todos /></span>`，这样一对比在第一个节点就发现不一样了，结果底下的全部都换掉。
+- 两个节点一样但是顺序不一样，同样也会导致最坏时间复杂度。这种情况要避免其实很简单，就是加入唯一key，这样react就会根据key的变化，而不是根据顺序进行diff计算了。
+```javascript
+// A
+<ul>
+  <TodoItem text="First" complete={false} />
+  <TodoItem text="Second" complete={false} />
+</ul>
+// B
+<ul>
+  <TodoItem text="Zero" complete={false} />
+  <TodoItem text="First" complete={false} />
+  <TodoItem text="Second" complete={false} />
+</ul>
+```
+### redux优化
+
+# 单元测试
+- Karma 测试框架，提供多浏览器环境跑单元测试的能力，包括headless浏览器。
+- Mocha 测试框架，提供兼容浏览器和Node环境的单元测试能力，可使用karma-mocha集成进Karma中。
+- Chai 断言库，支持should,expect,assert不同类型的断言测试函数，可使用karma-chai集成进Karma中。
+- 大部分单元测试都是基于上述三个库联合使用而展开的。Karma-webpack主要提供的能力，是为Karma中加载的测试脚本提供模块化加载的能力。
+
 # 设计领域
 
 ## 控制反转
 - 控制反转就是把原来自己控制的权限转交给外部控制的过程叫做控制反转，也叫控制转移。
 - 依赖注入就是把控制权转交出去，依赖查找就是外部容器控制这个对象。
-  
 ```javascript
 class IoC {
     constructor() {
@@ -471,71 +510,106 @@ class IoC {
 ```
 
 ## 面向切面
-- 
+- 面向切面编程其实就是代理模式
+- 表单引擎在预编译的时候把this._onChange与this._aop绑定在一起，在onChange运行时的时候才真正去出发this._aop中的方法。
+- 面向切面编程，通过预编译方式和运行期动态代理实现程序功能的统一维护的一种技术。每个组件把自己转交给IoC容器，然后继承BaseComponent在切面中编写代码。实例化IoC容器，并且把组件注入到容器中。绑定aop切面，让子类可以方便的使用aop切面。
+```javascript
+export class BaseComponent extends Component {
+    static displayName = 'BaseComponent'
+    constructor(props) {
+        super(props)
+        this.IoC = IoC.getInstance()
+        this._aop = bind(this.aop, this)
+    }
+    componentWillMount() {
+        if (this.props.displayName && this.props.displayName !== 'undefined') {
+            if (!(this.props.displayName.indexOf('FormEngine') > -1)) {
+                this.IoC.injection(this.props.displayName, this)
+            }
+        }
+    }
+    aop(...args) {
+        return this.props.AOP(...args)
+    }
+}
+```
 
 ## 设计模式
 - 单例模式。由于所有的组件都要互相通讯，所以必须保证所有的组件都在同一个容器中，所以使用单例模式创建IoC容器。
-- 
+- 装饰器模式。就类似高阶函数。
+- 代理模式。就类似AOP切面编程。
+- 中介者模式。通过dependencies把状态传出去。
+- 观察者模式。
 
 ## 设计原则
 ### 简单，单一，尽量少互相依赖，可扩展不可修改，尽量组合。
-- 单一职责原则（Single Responsibility Principle）每一个类应该专注于做一件事情。
-- 接口隔离原则（Interface Segregation Principle）应当为客户端提供尽可能小的单独的接口，而不是提供大的总的接口。
-- 迪米特法则（Law Of Demeter）又叫最少知识原则，一个软件实体应当尽可能少的与其他实体发生相互作用。
-- 组合/聚合复用原则（Composite/Aggregate Reuse Principle CARP）尽量使用合成/聚合达到复用，尽量少用继承。原则： 一个类中有另一个类的对象。
-- 开闭原则（Open Close Principle）面向扩展开放，面向修改关闭。
+- 单一职责原则（Single Responsibility Principle）
+  - 优点：类的复杂性降低，可读性提高。一个类应该只有一个发生变化的原因。类、函数和接口都要要遵循单一职责原则。遵守单一职责原则，将不同的职责封装到不同的类或模块中。
+  - 举例：比如常用的radio组件，一个是button，另一个是group。其实很简单就是一个选中操作，但是经常会有需求出现一个group中只能选中一个radio，在这里会分成两个组件。一个是radio很简单就是一个render组件，另一个是控制子节点选中的状态，也很简单用来维护状态就行了。
+
+- 接口隔离原则（Interface Segregation Principle）
+  - 特点：应当为客户端提供尽可能小的单独的接口，而不是提供大的总的接口。使用多个专门的接口比使用单一的总接口要好。
+  - 举例：比如tab切换后要选中第1项，那么我会提供两个接口来给外部调用，一个是切换tab，另一个是选中第1项。
+
+- 迪米特法则（Law Of Demeter）
+  - 特点：又叫最少知识原则，一个软件实体应当尽可能少的与其他实体发生相互作用。
+  - 举例：dependencies从开发人员的角度出发是开闭原则，从引擎的角度出发是迪米特法则。还有类似的比如
+
+- 开闭原则（Open Close Principle）
+  - 特点：面向扩展开放，面向修改关闭。稳定，灵活，可扩展。
+  - 举例：组件通信，字段之间的关联关系。通过dependencies，中介者模式。引擎把组件之间需要互相调用的所有数据都传递出去给中介者，用户可以在中介者里面修改组件如何通讯。比如说一个评分组件可以评1~5分，1分和5分要说明原因所以会出现一个textarea的组件，2-4分不用说明原因。那么引擎不能把这个逻辑直接实现，而是把组件之间的状态都传递出去，给用户自己去实现。不然将来万一要变就会导致需要重新修改引擎，所以引擎把重心放在组件的数据状态传递出去，给用户自己实现，因为需要控制的权限已经在IoC容器里面，完全可以达到目的。
 ### 依赖抽象不要依赖具体，用基类定义子类替换，
-- 依赖倒置原则（Dependence Inversion Principle）实现尽量依赖抽象，不依赖具体实现。
-- 里氏替换原则（Liskov Substitution Principle）超类存在的地方，子类是可以替换的。
- 
+- 依赖倒置原则（Dependence Inversion Principle）
+  - 特点：实现尽量依赖抽象，不依赖具体实现。
+  - 举例：List容器依赖抽象实现，在map循环数组的时候把renderItem放给外面，给外面定义，本身只是抽象的调用了renderItem方法表示在这个位置会有一个Item。因为Item可能会有上下结构，也可能会有左右结构，可能会有图片按钮，这些要放给外面去实现。而不能具体的把这个item就直接实现成左右或者上下结构，这样当用户需要修改的时候就无法修改变成重新复制一份出来修改。
+
+- 里氏替换原则（Liskov Substitution Principle）
+  - 特点：用父类定义，用子类赋值。超类存在的地方，子类是可以替换的。子类继承了父类的方法，同时子类还可以扩展自己的方法。面向对象的语言的三大特点是继承、封装、多态，里氏替换原则就是依赖于继承、多态这两大特性。
+  - 举例：容器类，都需要渲染this.props.children，但是不容的容器对children渲染方式都不一样，比如List容器，Tabs容器。因此我们定义了baseContainer基类实现了渲染children的方法，然后ListContainer和TabsContainer去继承这个基类，定义自己的渲染方式。基类只是把children渲染出来，子类则是定义了渲染后如何展示。
+
+### 其他补充
+- 组合/聚合复用原则（Composite/Aggregate Reuse Principle CARP）尽量使用合成/聚合达到复用，尽量少用继承。
+  - 特点： 一个类中有另一个类的对象。对比继承子类会被父类污染。但是如果是非常明确的一定必须要有的，继承依然可以使用。组合比较灵活。
 
  
 # 其他
 ## 状态码
-  n200 OK，当GET请求成功完成，DELETE或者PATCH请求同步完成。
-  n201 Created，对于那些要服务器创建对象的请求来说，资源已创建完毕。
-  n202 Accepted，POST，DELETE或者PATCH请求提交成功，稍后将异步的进行处理。
-  n204 No Content，Response中包含一些Header和一个状态行， 但不包括实体的主题内容（没有response body）
-  n304 Not Modified，客户的缓存资源是最新的， 要客户端使用缓存
-
-  n400 Bad Request
-  require_argument 缺少参数
-  invalid_argument 无效参数
-  n401 Unauthorized: 请求失败，因为用户没有进行认证
-  auth_token_expired 授权已过期
-  auth_invalid_token 无效的授权(如token不存在、需要mac签名、mac签名无效、nonce无效、重复提交等)
-  n403 Forbidden: 请求失败，因为用户被认定没有访问特定资源的权限
-  auth_denied 授权受限（无权限或IP地址受限等）
-  n405 Method Not Allowed：不支持该 Request 的方法
-  n406 Not Acceptable：请求的资源的内容特性无法满足请求头中的条件，因而无法生成响应实体。
-  n415 Unsupported Media Type: 对于当前请求的方法和所请求的资源，请求中提交的实体并不是服务器中所支持的格式，因此请求被拒绝。
-  n429 Too Many Requests: 请求频率超配，稍后再试。
-  n500 Internal Server Error: 服务器遇到一个错误，使其无法为请求提供服务
-  n501 Not Implemented：客户端发起的请求超出服务器的能力范围(比如，使用了服务器不支持的请求方法)时，使用此状态码。
-  n502 Bad Gateway：代理使用的服务器遇到了上游的无效响应
-  n503 Service Unavailable：服务器目前无法为请求提供服务，但过一段时间就可以恢复服务
-
+    n200 OK，当GET请求成功完成，DELETE或者PATCH请求同步完成。
+    n201 Created，对于那些要服务器创建对象的请求来说，资源已创建完毕。
+    n202 Accepted，POST，DELETE或者PATCH请求提交成功，稍后将异步的进行处理。
+    n204 No Content，Response中包含一些Header和一个状态行， 但不包括实体的主题内容（没有response body）
+    n304 Not Modified，客户的缓存资源是最新的， 要客户端使用缓存
+    n400 Bad Request
+    require_argument 缺少参数
+    invalid_argument 无效参数
+    n401 Unauthorized: 请求失败，因为用户没有进行认证
+    auth_token_expired 授权已过期
+    auth_invalid_token 无效的授权(如token不存在、需要mac签名、mac签名无效、nonce无效、重复提交等)
+    n403 Forbidden: 请求失败，因为用户被认定没有访问特定资源的权限
+    auth_denied 授权受限（无权限或IP地址受限等）
+    n405 Method Not Allowed：不支持该 Request 的方法
+    n406 Not Acceptable：请求的资源的内容特性无法满足请求头中的条件，因而无法生成响应实体。
+    n415 Unsupported Media Type: 对于当前请求的方法和所请求的资源，请求中提交的实体并不是服务器中所支持的格式，因此请求被拒绝。
+    n429 Too Many Requests: 请求频率超配，稍后再试。
+    n500 Internal Server Error: 服务器遇到一个错误，使其无法为请求提供服务
+    n501 Not Implemented：客户端发起的请求超出服务器的能力范围(比如，使用了服务器不支持的请求方法)时，使用此状态码。
+    n502 Bad Gateway：代理使用的服务器遇到了上游的无效响应
+    n503 Service Unavailable：服务器目前无法为请求提供服务，但过一段时间就可以恢复服务
 
 
-
-
-
-- react渲染优化、长列表优化、重复渲染优化
 - 前端性能优化、PWA（service worker，IndexedDB，manifest，push notification）
-- 单元测试框架
 
-- setTimeout()，newPromise()
+
+- setTimeout()，newPromise()，串行执行Promise（redux-saga）
+- async/await、await和sleep区别、怎么理解多线程
 - 浏览器事件循环，队列优先级不同
-- 串行执行Promise
-- async/await、await和sleep区别
-- 项目中最难的问题如何解决
-- 测试框架
+- 项目中最难的问题如何解决（组件的通信机制）
 - Typescript
 - JS基础
-- 怎么理解多线程
-- 数据库同步，升级
+- 数据库同步，升级indexDB
+
+
 - 英文阅读
-- Android线程通信
 - css基础：position
   flex布局
 - 项目框架

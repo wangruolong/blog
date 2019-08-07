@@ -12,18 +12,16 @@ tags:
 
 <!-- more -->
 ## 资源压缩与合并
-- html压缩
-- css压缩
-- js压缩
-- 文件合并和拆分
+- html压缩。
+- css压缩。MiniCssExtractPlugin
+- js压缩。UglifyJSPlugin
+- 文件合并和拆分。合并业务代码文件，拆分公共库文件，避免缓存失效。
 ## 图片相关的优化
-- 压缩图片
-- 雪碧图SpritesmithPlugin
+- 压缩图片。在线压缩
+- 雪碧图。SpritesmithPlugin
 - image inline
-- 通过url-loader和file-loader来配合使用。构建工具通过url-loader来优化项目中对于资源的引用路径，并设定大小限制，当资源的体积小于limit时将其直接进行Base64转换后嵌入引用文件，体积大于limit时可通过fallback参数指定的loader进行处理。
-- 先用一张极小的图片来代替，等到内容加载完了，再向服务器请求真正的图片并替换，可以有效的减少等待时间。
-
-
+- url-loader和file-loader来配合使用。构建工具通过url-loader来优化项目中对于资源的引用路径，并设定大小限制，当资源的体积小于limit时将其直接进行Base64转换后嵌入引用文件，体积大于limit时可通过fallback参数指定的loader进行处理。
+- 预加载。先用一张极小的图片来代替，等到内容加载完了，再向服务器请求真正的图片并替换，可以有效的减少等待时间。
 ## css和js的装载与执行
 ## 懒加载和预加载
 ## 重绘与回流
