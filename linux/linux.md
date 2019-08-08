@@ -12,7 +12,7 @@ Linux服务器标配的基本环境。
 
 <!-- more -->
 
-# 安装Nginx
+## 安装Nginx
 1. 需要先安装Nginx的依赖。`-y`是可选参数，意思是在安装的过程中遇到`Is this OK[y/d/N]`的时候，自动选择`y`。这个其实就是和Windows环境下的默认安装是同一个道理。
 ```
 yum [-y] install gcc
@@ -38,4 +38,7 @@ make
 6. 安装。
 make install
 
-# 安装rar解压工具。
+## 安装rar解压工具
+
+## 安装https证书
+
