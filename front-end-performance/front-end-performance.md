@@ -23,7 +23,22 @@ tags:
 - url-loader和file-loader来配合使用。构建工具通过url-loader来优化项目中对于资源的引用路径，并设定大小限制，当资源的体积小于limit时将其直接进行Base64转换后嵌入引用文件，体积大于limit时可通过fallback参数指定的loader进行处理。
 - 预加载。先用一张极小的图片来代替，等到内容加载完了，再向服务器请求真正的图片并替换，可以有效的减少等待时间。
 ## css和js的装载与执行
+
 ## 懒加载和预加载
+### 懒加载
+- getBoundingClientRect用于获取某个元素相对于视窗的位置集合。集合中有top, right, bottom, left等属性。
+    `rectObject = object.getBoundingClientRect();`
+    rectObject.top：元素上边到视窗上边的距离;rectObject.right：元素右边到视窗左边的距离;rectObject.bottom：元素下边到视窗上边的距离;rectObject.left：元素左边到视窗左边的距离;
+    rectObject.width：元素的宽度;rectObject.height：元素的高度;
+    <img src="getBoundingClientRect.png" />
+    <img src="compatibilityDesktop.png" />
+    <img src="compatibilityMobile.png" />
+- 通过监听scroll实践，判断rectObject.top是否到达可视区域高度clientHeight，等到达了再把原来藏在img里面的dataUrl放到src里面，让img请求加载图片。
+### 预加载
+- 用`<img/>`事先加载
+- 用`Image img = new Image()`来创建
+- 用xmlhttprequest请求的时候把图片打开，让浏览器缓存住这张图片。这种做法会比较精确的控制什么时候需要预加载。但是要特别注意跨域问题。
+
 ## 重绘与回流
 - 回流必定触发重绘，而重绘不一定触发回流。
 ## 浏览器存储cookies localstorage sessionstorage indexedDB
