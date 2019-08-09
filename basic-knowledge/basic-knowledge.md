@@ -53,7 +53,7 @@ tags:
 <img src="九宫格.png" />
 
 # Node.js
-## __dirname
+## __dirname和process.cwd()
 - `Node.js` 中，`__dirname` 总是指向被执行js文件的绝对路径。
 ```js
 console.info('process.cwd()是当前进程的工作目录，参照package.json所在的位置的。',process.cwd())
@@ -64,7 +64,7 @@ console.info('__dirname是当前js文件所处的路径。',__dirname)
 两种用法：
 1. 连接路径：path.join([path1][, path2][, ...])
 2. 路径解析：path.resolve([from ...], to)
-
+最大的区别：就是对`/`的解析，`join`只是拼上去，而`resolve`则是解析成根路径`/`
 ```javascript
 var path = require('path');
 path.join('/foo', 'bar', 'baz/asdf', 'quux', '..')
@@ -90,39 +90,34 @@ console.log(myPath);    //D:\myProgram\test\img\so
 console.log(myPath2);   //D:\myProgram\test\img\so
 console.log(myPath3);   //D:\img\so
 console.log(myPath4);   //D:\myProgram\test\img\so
-
 ```
 
 # ES6
-- ES6的几个阶段
-任何人都可以向标准委员会（又称 TC39 委员会）提案，要求修改语言标准。
-一种新的语法从提案到变成正式标准，需要经历五个阶段。每个阶段的变动都需要由 TC39 委员会批准。
-Stage 0 - Strawman（展示阶段）
-Stage 1 - Proposal（征求意见阶段）
-Stage 2 - Draft（草案阶段）
-Stage 3 - Candidate（候选人阶段）
-Stage 4 - Finished（定案阶段）
-一个提案只要能进入 Stage 2，就差不多肯定会包括在以后的正式标准里面。ECMAScript 当前的所有提案，可以在 TC39 的官方网站Github.com/tc39/ecma262查看。
+## ES6的几个阶段
+    任何人都可以向标准委员会（又称 TC39 委员会）提案，要求修改语言标准。一种新的语法从提案到变成正式标准，需要经历五个阶段。每个阶段的变动都需要由 TC39 委员会批准。
+    Stage 0 - Strawman（展示阶段）
+    Stage 1 - Proposal（征求意见阶段）
+    Stage 2 - Draft（草案阶段）
+    Stage 3 - Candidate（候选人阶段）
+    Stage 4 - Finished（定案阶段）
+    一个提案只要能进入 Stage 2，就差不多肯定会包括在以后的正式标准里面。ECMAScript 当前的所有提案，可以在 TC39 的官方网站Github.com/tc39/ecma262查看。
 
-- 在SwitchCase的case中如果没有{}
-  当词法声明 (let、const、function 和 class) 出现在 case或default 子句中。该词法声明的变量在整个 switch 语句块中是可见的，但是它只有在运行到它定义的 case 语句时，才会进行初始化操作。为了保证词法声明语句只在当前 case 语句中有效，需要用大括号`{}`将你子句包裹在块中。
+## 在SwitchCase的case中如果没有{}
+    当词法声明 (let、const、function 和 class) 出现在 case或default 子句中。该词法声明的变量在整个 switch 语句块中是可见的，但是它只有在运行到它定义的 case 语句时，才会进行初始化操作。为了保证词法声明语句只在当前 case 语句中有效，需要用大括号`{}`将你子句包裹在块中。
 
 # Babel
-    Babel 的配置文件是`.babelrc`，存放在项目的根目录下。使用 Babel 的第一步，就是配置这个文件。
+    Babel的配置文件是.babelrc，存放在项目的根目录下。使用 Babel 的第一步，就是配置这个文件。
     该文件用来设置转码规则和插件，基本格式如下。
     {
       "presets": [],
       "plugins": []
     }
-
-##  `presets`
-    `presets`字段设定转码规则，官方提供以下的规则集，你可以根据需要安装。
+##  presets
+    presets字段设定转码规则，官方提供以下的规则集，你可以根据需要安装。
     # 最新转码规则
     $ npm install --save-dev babel-preset-latest
-
     # react 转码规则
     $ npm install --save-dev babel-preset-react
-
     # 不同阶段语法提案的转码规则（共有4个阶段），选装一个
     # Stage 0 - Strawman（展示阶段）
     # Stage 1 - Proposal（征求意见阶段）
@@ -133,7 +128,6 @@ Stage 4 - Finished（定案阶段）
     $ npm install --save-dev babel-preset-stage-1
     $ npm install --save-dev babel-preset-stage-2
     $ npm install --save-dev babel-preset-stage-3
-
     {
       "presets": [
         "env",
@@ -144,9 +138,9 @@ Stage 4 - Finished（定案阶段）
     }
 
     如果presets没有设置`stage-2`，因为这里面有些语法还在`stage-2`阶段还没有正式发布，所以如果没有加上这个配置就无法解析这种语法。
-  <img src="presets没有设置stage-2.png" />
+<img src="presets没有设置stage-2.png" />
 
-### `presets`打包优化
+### presets打包优化
     {
       "presets": [
         ["env",{
@@ -177,10 +171,10 @@ Stage 4 - Finished（定案阶段）
     transform-runtime
     default 2119   168KB
 
-## `plugins`
+## plugins
     {
       "plugins": [
-          "add-module-exports",// 转义import和export
+        "add-module-exports",// 转义import和export
         "transform-runtime",// 转义generator
         "transform-decorators-legacy",// 转义@
         "transform-class-properties",// 转义class
@@ -189,19 +183,21 @@ Stage 4 - Finished（定案阶段）
       ]
     }
 
-`plugins`字段设定插件
-- 配置`transform-runtime`
-  - 作用：支持generator。当项目启用generate的时候如果没有这个插件会报错`regeneratorRuntime is not defined`。
-  - 安装：`"babel-plugin-transform-runtime": "^6.23.0"`
-- 配置`transform-decorators-legacy`
-  - 作用：支持@语法
-  - 安装：`"babel-plugin-transform-decorators-legacy": "^1.3.5"`
-- 配置`add-module-exports`
-  - 作用：支持import和export语法
-  - 安装：`"babel-plugin-add-module-exports": "^1.0.0"`
-- 配置`transform-class-properties`
-  - 作用：有时候我们将 defaultProps, propTypes写在class中，而不是分开写，可以使用这个插件支持。
-    ```jsx
+### plugins字段插件详解
+#### 配置transform-runtime
+    作用：支持generator。当项目启用generate的时候如果没有这个插件会报错regeneratorRuntime is not defined。
+    安装："babel-plugin-transform-runtime": "^6.23.0"
+
+#### 配置transform-decorators-legacy
+    作用：支持@语法
+    安装："babel-plugin-transform-decorators-legacy": "^1.3.5"
+
+#### 配置add-module-exports
+    作用：支持import和export语法
+    安装："babel-plugin-add-module-exports": "^1.0.0"
+
+#### 配置transform-class-properties
+    作用：有时候我们将 defaultProps, propTypes写在class中，而不是分开写，可以使用这个插件支持。
     class App extends React.Component {
       static propTypes = {
         num: React.PropTypes.number.isRequired,
@@ -211,56 +207,56 @@ Stage 4 - Finished（定案阶段）
         num: 1,
         val: "hello React"
       }
-      // ...
     }
-    ```
-  - 安装：`"babel-plugin-transform-class-properties": "^6.24.1"`
+    安装："babel-plugin-transform-class-properties": "^6.24.1"
 
-- 配置`transform-es3-member-expression-literals` `transform-es3-property-literals`
-  - 作用：像下面这种代码
-    ```js
-    function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-    module.exports = _main2.default;
-    ```
-    在 IE8 下会直接报”缺少标识符、字符串或数字”的错。我们得在对象的属性上加 '' 才可以。就像下面这样：
-    ```js
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { 'default': obj };
-    }
-    ```
-    至于原因，并不是 IE8 下对象的属性必须得加 '' 才行，而是 default 的问题，作为一个关键字，同样的问题还包括 catch。这两种情况，可以通过使用`transform-es3-property-literals`和`transform-es3-member-expression-literals`这两个插件搞定。总之，在平时写代码的时候避免使用关键字，或者保留字作为对象的属性值，尤其是在习惯不加引号的情况下。相关讨论：[Allow reserved words for properties](https://github.com/airbnb/javascript/issues/61)
-  - 安装：`"babel-plugin-transform-es3-member-expression-literals": "^6.22.0"` `"babel-plugin-transform-es3-property-literals": "^6.22.0",`
-
-## 在webpack中
-`Using removed Babel 5 option`报错使用了被移除的babel5中的语法，是因为没有把`node_modules`排除掉。目录是相对package.json的路径。
-因为`node_modules`里面有一些包是用了Babel 5中的语法，但是在这个loader里面又是被移除了，所以就报错了，根本解决办法就是把`node_modules`exclude掉。
+#### 配置 transform-es3-member-expression-literals和transform-es3-property-literals
+    作用：像下面这种代码
 ```js
-   module: {
-        rules: [
-            {
-                exclude:/node_modules/,
-                test: /\.(js|jsx)$/,
-                loader: ['babel-loader','eslint-loader']
-            }
-        ]
-   }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+module.exports = _main2.default;
+```
+    在 IE8 下会直接报”缺少标识符、字符串或数字”的错。我们得在对象的属性上加 '' 才可以。就像下面这样：
+```js
+function _interopRequireDefault(obj) {
+  return obj && obj.__esModule ? obj : { 'default': obj };
+}
+```
+    至于原因，并不是 IE8 下对象的属性必须得加 '' 才行，而是 default 的问题，作为一个关键字，同样的问题还包括 catch。这两种情况，可以通过使用`transform-es3-property-literals`和`transform-es3-member-expression-literals`这两个插件搞定。总之，在平时写代码的时候避免使用关键字，或者保留字作为对象的属性值，尤其是在习惯不加引号的情况下。相关讨论：[Allow reserved words for properties](https://github.com/airbnb/javascript/issues/61)
+    安装："babel-plugin-transform-es3-member-expression-literals": "^6.22.0"
+    "babel-plugin-transform-es3-property-literals": "^6.22.0"
+
+## babel在webpack中出现的问题
+### Using removed Babel 5 option 
+    使用了被移除的babel5中的语法，是因为没有把node_modules排除掉。目录是相对package.json的路径。
+    因为node_modules里面有一些包是用了Babel 5中的语法，但是在这个loader里面又是被移除了，所以就报错了，根本解决办法就是把`node_modules`exclude掉。
+```js
+module: {
+      rules: [
+          {
+              exclude:/node_modules/,
+              test: /\.(js|jsx)$/,
+              loader: ['babel-loader','eslint-loader']
+          }
+      ]
+}
 ```
 <img src="未exclude导致的babel报错.png" />
 
 
 # Eslint
-- package.json
+## 需要引用的js包（package.json）
 ```json
 {
-"babel-eslint": "^10.0.1",
-"eslint": "^5.13.0",
-"eslint-plugin-react": "^7.12.4",
-"eslint-loader": "^2.1.1",
+  "babel-eslint": "^10.0.1",
+  "eslint": "^5.13.0",
+  "eslint-plugin-react": "^7.12.4",
+  "eslint-loader": "^2.1.1",
 }
 ```
-## eslintrc.json
-特别要注意parser要设置babel-eslint，用babel转换之后给eslint验证规则。
-`babel-eslint`，`eslint`，`eslint-plugin-react`主要用于eslintrc.json的配置。
+## 配置文件（eslintrc.json）
+    1、要在配置文件中设置 parser 为 babel-eslint ，意思是用babel转换之后再给eslint验证，否则有些es6的语法可能eslint并无法识别。
+    2、babel-eslint，eslint，eslint-plugin-react主要用于eslintrc.json的配置。
 ```json
 {
   "parser": "babel-eslint",
@@ -300,29 +296,28 @@ Stage 4 - Finished（定案阶段）
 }
 
 ```
-## 在webpack中
-`eslint-loader`用于webpack的配置。
+## 配置到webpack中
+    eslint-loader用于webpack的配置。
 ```js
 module: {
-		rules: [
-			{
-				exclude: /node_modules/,
-				test: /\.(js|jsx)$/,
-				loader: ['babel-loader','eslint-loader']
-			}
+    rules: [
+      {
+        exclude: /node_modules/,
+        test: /\.(js|jsx)$/,
+        loader: ['babel-loader','eslint-loader']
+      }
     ]
 }
 ```
 ## 增加钩子让用户在提交前都执行以下eslint。
-Git hooks made easy
-在package.json增加husky依赖，同时配置commit之前和push之前需要执行的命令，强制用户执行eslint检查。
+    Git hooks made easy
+    在package.json增加husky依赖，同时配置commit之前和push之前需要执行的命令，强制用户执行eslint检查。
 ```json
 {
   "husky": {
     "hooks": {
       "pre-commit": "npm test",
       "pre-push": "npm test",
-      "...": "..."
     }
   },
   "devDependencies":{
@@ -331,138 +326,273 @@ Git hooks made easy
 }
 ```
 ## 推荐配置
-可以访问`https://cn.eslint.org/demo/`勾选需要的配置，然后下载到本地使用。
-0 = off, 1 = warn, 2 = error 
+    可以访问`https://cn.eslint.org/demo/`勾选需要的配置，然后下载到本地使用。
+    0 = off, 1 = warn, 2 = error 
 ```json
 {
-    "parserOptions": {
-        "ecmaVersion": 6,
-        "sourceType": "script",
-        "ecmaFeatures": {}
-    },
-    "rules": {
-        "constructor-super": 2,
-        "no-case-declarations": 2,
-        "no-class-assign": 2,
-        "no-compare-neg-zero": 2,
-        "no-cond-assign": 2,
-        "no-console": 2,
-        "no-const-assign": 2,
-        "no-constant-condition": 2,
-        "no-control-regex": 2,
-        "no-debugger": 2,
-        "no-delete-var": 2,
-        "no-dupe-args": 2,
-        "no-dupe-class-members": 2,
-        "no-dupe-keys": 2,
-        "no-duplicate-case": 2,
-        "no-empty-character-class": 2,
-        "no-empty-pattern": 2,
-        "no-empty": 2,
-        "no-ex-assign": 2,
-        "no-extra-boolean-cast": 2,
-        "no-extra-semi": 2,
-        "no-fallthrough": 2,
-        "no-func-assign": 2,
-        "no-global-assign": 2,
-        "no-inner-declarations": 2,
-        "no-invalid-regexp": 2,
-        "no-irregular-whitespace": 2,
-        "no-mixed-spaces-and-tabs": 2,
-        "no-new-symbol": 2,
-        "no-obj-calls": 2,
-        "no-octal": 2,
-        "no-redeclare": 2,
-        "no-regex-spaces": 2,
-        "no-self-assign": 2,
-        "no-sparse-arrays": 2,
-        "no-this-before-super": 2,
-        "no-undef": 2,
-        "no-unexpected-multiline": 2,
-        "no-unreachable": 2,
-        "no-unsafe-finally": 2,
-        "no-unsafe-negation": 2,
-        "no-unused-labels": 2,
-        "no-unused-vars": 2,
-        "no-useless-escape": 2,
-        "require-yield": 2,
-        "use-isnan": 2,
-        "valid-typeof": 2
-    },
-    "env": {}
+  "parserOptions": {
+      "ecmaVersion": 6,
+      "sourceType": "script",
+      "ecmaFeatures": {}
+  },
+  "rules": {
+      "constructor-super": 2,
+      "no-case-declarations": 2,
+      "no-class-assign": 2,
+      "no-compare-neg-zero": 2,
+      "no-cond-assign": 2,
+      "no-console": 2,
+      "no-const-assign": 2,
+      "no-constant-condition": 2,
+      "no-control-regex": 2,
+      "no-debugger": 2,
+      "no-delete-var": 2,
+      "no-dupe-args": 2,
+      "no-dupe-class-members": 2,
+      "no-dupe-keys": 2,
+      "no-duplicate-case": 2,
+      "no-empty-character-class": 2,
+      "no-empty-pattern": 2,
+      "no-empty": 2,
+      "no-ex-assign": 2,
+      "no-extra-boolean-cast": 2,
+      "no-extra-semi": 2,
+      "no-fallthrough": 2,
+      "no-func-assign": 2,
+      "no-global-assign": 2,
+      "no-inner-declarations": 2,
+      "no-invalid-regexp": 2,
+      "no-irregular-whitespace": 2,
+      "no-mixed-spaces-and-tabs": 2,
+      "no-new-symbol": 2,
+      "no-obj-calls": 2,
+      "no-octal": 2,
+      "no-redeclare": 2,
+      "no-regex-spaces": 2,
+      "no-self-assign": 2,
+      "no-sparse-arrays": 2,
+      "no-this-before-super": 2,
+      "no-undef": 2,
+      "no-unexpected-multiline": 2,
+      "no-unreachable": 2,
+      "no-unsafe-finally": 2,
+      "no-unsafe-negation": 2,
+      "no-unused-labels": 2,
+      "no-unused-vars": 2,
+      "no-useless-escape": 2,
+      "require-yield": 2,
+      "use-isnan": 2,
+      "valid-typeof": 2
+  },
+  "env": {}
 }
 ```
 # webpack
 
 ## webpack性能优化（详见性能优化图片相关的优化）
+    1、合并和拆分。合并业务代码，拆分公共代码。splitChunks
+    2、图片优化。雪碧图。url-loader和file-loader配合只用。
+    3、压缩js和css。UglifyJsPlugin、OptimizeCSSAssetsPlugin
+    4、样式表用link引入，并置顶。
 
-## 样式表的Loader `style-loader ` `css-loader` `sass-loader`
-- style-loader把css放到<styles/>里面，而css-Loader则是把css通过<link/>引入。
-- 启用MiniCssExtractPlugin.loader会把css进行压缩。
-- `css-loader`要启用modules=true，在代码里面才能import styles from 'style.css'。同时设置localIdentName规则把css的名称进行干扰，防止全名冲突。
+## 样式表的Loader style-loader css-loader sass-loader
+    1、css-Loader把css通过<link/>引入，而style-loader把css放到<styles/>里面。
+    2、css-loader要配合MiniCssExtractPlugin.loader会把css进行抽取独立文件。
+    3、css-loader要启用modules=true，在代码里面才能import styles from 'style.css'。同时设置localIdentName规则对css的名称设置唯一id，防止全名冲突。
+    4、可以开启OptimizeCSSAssetsPlugin对css进行压缩。
 ```js
 {
-  loader: 'css-loader',
-  options: {
-    modules: true,
-    localIdentName: '[path][name]__[local]--[hash:base64:5]'
-  }
+  test: /\.(sc|c)ss$/,
+  use: [
+    MiniCssExtractPlugin.loader,
+    {
+      loader: 'css-loader',
+      options: {
+        modules: true,
+        localIdentName: '[path][name]__[local]--[hash:base64:5]'
+      }
+    },
+    {
+      loader: 'sass-loader'
+    }
+  ]
 }
 ```
 <img src="未开启modules.png" />
 <img src="开启modules.png" />
 
 ## IP访问
-在package.json的执行脚本中增加`--host 0.0.0.0`就可以通过ip访问了，缺点是一开始启动的时候无法打开网页。
-也可以通过js获取本机ip
+    在package.json的执行脚本中增加`--host 0.0.0.0`就可以通过ip访问了，缺点是刚开始启动的时候无法打开网页，需要等启动完成后输入地址重新访问。
+    也可以通过js获取本机ip
+```js
+devServer: {
+  disableHostCheck: true,
+  // host: '0.0.0.0'
+  host:(function getIPAdress(){  
+    var interfaces = require('os').networkInterfaces()  
+    for(var devName in interfaces){  
+        var iface = interfaces[devName]  
+        for(var i=0;i<iface.length;i++){  
+            var alias = iface[i]
+            if(alias.family === 'IPv4' && alias.address !== '127.0.0.1' && !alias.internal){  
+              return alias.address  
+            }
+        }
+    }
+  })()
+}
+```
 <img src="获取ip.png" />
 
-## `file-loader`与`url-loader`
-- 区别
-  + 相同点：都可以用来加载资源文件。
-  + 不同点：`url-loader`可以设置小于指定大小的文件直接打包到js里面，减少请求次数。
-- 联系
-  + 当有文件超过`url-loader`指定的文件大小后，不会被打包到js里面，但是它就变成需要`file-loader`加载否则会报错。
-  + 把小图片打包到js里面减少请求次数各有利弊。优点：可以减少小图片的请求次数，降低网络IO的请求次数。缺点：图片会被转换成base64的格式和js一起打包进入会带出新的问题，就是这样会导致js越来越大，这样加载单个js可能需要的时长会更长。另外，base64的算法是把原来的数据每3位用4位替换，这样原来如果是1，就会变成4/3，相当于变大了4/3倍。
-  + 因此是否需要使用`url-loader`把小图片打包到js文件需要权衡后再做决定。把小图片打包到js需要做的牺牲就是js文件会变大。
-  + `file-loader`实现的是懒加载，只有在页面需要用到具体的元素才会加载，否则并不会加载。这样能提高整体的性能。
-- 核心用法
-  + `file-loader`的`publicPath`属性，用来指定访问的路径。
-  + `file-loader`的`outputPath`属性，用来指定打包输出的路径和访问的路径。建议使用outputPath属性，因为这个属性同时指定了打包输入和访问的路径，而`publicPath`只指定了访问的路径，如果你实际打包的路径不是这个就访问不到了。
-  + `url-loader`的`limit`属性，用来指定小于限定的字节(Byte)则打包到js文件里面，超过限定的字节(Byte)则需要`file-loader`加载。
-
+## file-loader与url-loader
+### 区别
+    1、相同点：都可以用来加载资源文件。
+    2、不同点：url-loader可以设置小于指定大小的文件直接打包到js里面，减少请求次数。file-loader则是把文件加载到指定目录。
+### 联系
+    1、当有文件超过`url-loader`指定的文件大小后，不会被打包到js里面，但是它就变成需要`file-loader`加载否则会报错。
+    2、把小图片打包到js里面减少请求次数各有利弊。优点：可以减少小图片的请求次数，降低网络IO的请求次数。缺点：图片会被转换成base64的格式和js一起打包进入会带出新的问题，就是这样会导致css变大，这样加载单个css可能需要的时长会更长。另外，base64的算法是把原来的数据每3位用4位替换，这样原来如果是1，就会变成4/3，相当于比原来大了1/3。
+    3、因此是否需要使用url-loader把小图片打包到js文件需要权衡后再做决定。把小图片打包到js需要做的牺牲就是js文件会变大。
+    4、file-loader实现的是懒加载，只有在页面需要用到具体的元素才会加载，否则并不会加载。这样能提高整体的性能。
+### 用法
+    1、file-loader的publicPath属性，用来指定访问的路径。
+    2、file-loader的outputPath属性，用来指定打包输出的路径和访问的路径。建议使用outputPath属性，因为这个属性同时指定了打包输入和访问的路径，而publicPath只指定了访问的路径，如果你实际打包的路径不是这个就访问不到了。
+    3、url-loader的limit属性，用来指定小于限定的字节(Byte)则打包到js文件里面，超过限定的字节(Byte)则需要file-loader加载。
+    4、基本用法如下，小于8k的图片可以转成base64一起打入css，大于的则用file-loader加载。这样既可以减少图片请求数，又保证了css文件不会太大。
+```js
+{
+  test:/\.(jpg|png|svg|gif)/,
+  use:[{
+    loader:'url-loader',
+    options:{
+      limit:8129,//小于limit限制8k 的图片将转为base64嵌入引用位置
+      fallback:'file-loader',//大于limit限制的将转交给指定的loader处理
+      outputPath:'imgs/'//options会直接传给fallback指定的loader
+    }
+  }]
+}
+```
 
 # React
 ## React中对XSS如何进行XSS攻击和防范
+    1、prerender / SSR 的 hydrate 过程会生成 html ，需要小心测试其中是否有 XSS 漏洞。
+    2、dangerouslySetInnerHTML、onload=字符串、href=字符串 等，都有可能造成 XSS 漏洞。
+    3、所有的用户输入都需要经过HTML实体编码，这里React已经帮我们做了很多，它会在运行时动态创建DOM节点然后填入文本内容（你也可以强制设置HTML内容，不过这样比较危险）
+    4、当你打算序列化某些状态并且传给客户端的时候，你同样需要进行HTML实体编码
+    5、Yahoo的工程师已经提供了一个Serialize JavaScript模块帮我们轻松地进行JSON转码与过滤，我们可以直接使用npm install --save serialize-javascript导入该模块，然后使用serialize方法替代内置的JSON.stringify方法:
+### XSS 漏洞的发生和修复
+    1、通常页面中包含的用户输入内容都在固定的容器或者属性内，以文本的形式展示。
+    2、攻击者利用这些页面的用户输入片段，拼接特殊格式的字符串，突破原有位置的限制，形成了代码片段。
+    3、攻击者通过在目标网站上注入脚本，使之在用户的浏览器上运行，从而引发潜在风险。
+    4、通过 HTML 转义，可以防止 XSS 攻击。
+```html
+<input type="text" value="<%= getParameter("keyword") %>">
+<button>搜索</button>
+<div>
+  您搜索的关键词是：<%= getParameter("keyword") %>
+</div>
+```
+    当浏览器请求 http://xxx/search?keyword="><script>alert('XSS');</script> 时，服务端会解析出请求参数 keyword，得到 "><script>alert('XSS');</script>，拼接到 HTML 中返回给浏览器。形成了如下的 HTML：
+```html
+<input type="text" value=""><script>alert('XSS');</script>">
+<button>搜索</button>
+<div>
+  您搜索的关键词是："><script>alert('XSS');</script>
+</div>
+```
+    浏览器无法分辨出 <script>alert('XSS');</script> 是恶意代码，因而将其执行。这里不仅仅 div 的内容被注入了，而且 input 的 value 属性也被注入， alert 会弹出两次。
+
+    解决办法
+```html
+<input type="text" value="<%= escapeHTML(getParameter("keyword")) %>">
+<button>搜索</button>
+<div>
+  您搜索的关键词是：<%= escapeHTML(getParameter("keyword")) %>
+</div>
+```
+    escapeHTML() 按照如下规则进行转义：|字符|转义后的字符| |-|-| |&|&amp;| |<|&lt;| |>|&gt;| |"|&quot;| |'|&#x27;| |/|&#x2F;|经过了转义函数的处理后，最终浏览器接收到的响应为：
+```html
+<input type="text" value="&quot;&gt;&lt;script&gt;alert(&#x27;XSS&#x27;);&lt;&#x2F;script&gt;">
+<button>搜索</button>
+<div>
+  您搜索的关键词是：&quot;&gt;&lt;script&gt;alert(&#x27;XSS&#x27;);&lt;&#x2F;script&gt;
+</div>
+```
+    恶意代码都被转义，不再被浏览器执行，而且搜索词能够完美的在页面显示出来。
+
+### 注意特殊的 HTML 属性、JavaScript API
+    1、做了 HTML 转义，并不等于高枕无忧。
+    2、对于链接跳转，如 <a href="xxx" 或 location.href="xxx"，要检验其内容，禁止以 javascript: 开头的链接，和其他非法的 scheme。
+```html
+<a href="<%= escapeHTML(getParameter("redirect_to")) %>">跳转...</a>
+```
+这段代码，当攻击 URL 为 http://xxx/?redirect_to=javascript:alert('XSS')，服务端响应就成了：
+```html
+<a href="javascript:alert(&#x27;XSS&#x27;)">跳转...</a>
+```
+```js
+// 根据项目情况进行过滤，禁止掉 "javascript:" 链接、非法 scheme 等
+allowSchemes = ["http", "https"];
+valid = isValid(getParameter("redirect_to"), allowSchemes);
+if (valid) {
+  <a href="<%= escapeHTML(getParameter("redirect_to"))%>">
+    跳转...
+  </a>
+} else {
+  <a href="/404">
+    跳转...
+  </a>
+}
+```
+### 根据上下文采用不同的转义规则
+    1、HTML 转义是非常复杂的，在不同的情况下要采用不同的转义规则。如果采用了错误的转义规则，很有可能会埋下 XSS 隐患。
+    2、应当尽量避免自己写转义库，而应当采用成熟的、业界通用的转义库。
+
+
+## 漏洞总结
+    1、在 HTML 中内嵌的文本中，恶意内容以 script 标签形成注入。
+    2、在内联的 JavaScript 中，拼接的数据突破了原本的限制（字符串，变量，方法名等）。
+    3、在标签属性中，恶意内容包含引号，从而突破属性值的限制，注入其他属性或者标签。
+    4、在标签的 href、src 等属性中，包含 javascript: 等可执行代码。
+    5、在 onload、onerror、onclick 等事件中，注入不受控制代码。
+    6、在 style 属性和标签中，包含类似 background-image:url("javascript:..."); 的代码（新版本浏览器已经可以防范）。
+    7、在 style 属性和标签中，包含类似 expression(...) 的 CSS 表达式代码（新版本浏览器已经可以防范）。
+    8、总之，如果开发者没有将用户输入的文本进行合适的过滤，就贸然插入到 HTML 中，这很容易造成注入漏洞。攻击者可以利用漏洞，构造出恶意的代码指令，进而利用恶意代码危害数据安全。
+
 
 ## react router
-未装propTypes报错`Cannot read property 'array' of undefined`
-react15之后prop-types被剥离开来，而react-router里面的很多写法还是react.proptypes这样肯定报错。所以有两种方案，一种是把react降到15之前（不包括15），另外一种就是把react-router升级到3.x以上版本。为什么不直接升级到4.x因为我试用了一下发现是服务端渲染，而且一大堆配套的都要升级，因此升级到3.x是最明智的选择。
+    未装propTypes报错Cannot read property 'array' of undefined
+    react15之后prop-types被剥离开来，而react-router里面的很多写法还是react.proptypes这样肯定报错。所以有两种方案，一种是把react降到15之前（不包括15），另外一种就是把react-router升级到3.x以上版本。为什么不直接升级到4.x因为我试用了一下发现是服务端渲染，而且一大堆配套的都要升级，因此升级到3.x是最明智的选择。
 <img src="未装propTypes报错1.png" />
 <img src="未装propTypes报错2.png" />
 
 ## redux saga
-当我dispatch一个action后，这个先发到reducer
-然后才走到saga，saga拿到后put了一个新的action这个新的action才是我们要处理的。
-简单来说，当我们dispatch一个action后，先发到reducer，然后saga同时也收到了一份，这时候saga可以put出新的action给reducer接收。
+    当我dispatch一个action后，这个先发到reducer
+    然后才走到saga，saga拿到后put了一个新的action这个新的action才是我们要处理的。
+    简单来说，当我们dispatch一个action后，先发到reducer，然后saga同时也收到了一份，这时候saga可以put出新的action给reducer接收。
 
 ## react性能优化
-### 消耗内存的优化。render里面尽量减少新建变量和bind函数，传递参数是尽量减少传递参数的数量。
-- onClick={this.handleClick}构造函数每一次渲染的时候只会执行一遍；这种方法最好。
-- onClick={this.handleClick.bind(this)}在每次render()的时候都会重新执行一遍函数。
-- onClick={()=>{this.handleClick()}}每一次render()的时候，都会生成一个新的箭头函数，即使两个箭头函数的内容是一样的。
+
 ### 多次render的优化。合理使用container和dump
-- 有些组件的数据都是从父组件一直传递到子组件，这样当父组件渲染的时候，子组件也会跟着渲染。所以比如list，dialog等类型的组件我都是让在redux里面，然后container进行connect。只有这些变化的时候才会重新render，否则父组件重新render也不会让子组件重新render因为，子组件的props都没有变化。
+    有些组件的数据都是从父组件一直传递到子组件，这样当父组件渲染的时候，子组件也会跟着渲染。所以比如list，dialog等类型的组件我都是让在redux里面，然后container进行connect。只有这些变化的时候才会重新render，否则父组件重新render也不会让子组件重新render因为，子组件的props都没有变化。
 ### 多次render的优化。定制shouldComponentUpdate函数
-- shouldComponentUpdate(nextProps,nextState) false不render，true才render。如果啥也不反悔默认返回true。
-- 在最新的react中，react给我们提供了React.PureComponent，官方也在早期提供了名为react-addons-pure-render-mixin插件来重新实现shouldComponentUpdate生命周期方法。
-### 消耗CPU的优化。immutable与with-immutable-props-to-js
-- （建议使用seamless-immutable）
-- javascript中的对象一般都是可变的，因为使用了引用赋值，新的对象简单的引用了原始对象，改变新对象将影响到原始对象。这样做非常的昂贵，对cpu和内存会造成浪费。
-### 消耗CPU的优化。针对react的diff算法加入key，防止最坏情况的发生
-- react为了追求高性能，采用了时间复杂度为O(N)来比较两个属性结构的区别。传统的比较两个树形结构，需要通过O(N^3)，这样性能很低。
-- 两个节不一样最坏时间复杂度。O(N)的最坏时间复杂度。也就是说避免这种情况：组件A`<div><Todos /></div>`和组件B`<span><Todos /></span>`，这样一对比在第一个节点就发现不一样了，结果底下的全部都换掉。
-- 两个节点一样但是顺序不一样，同样也会导致最坏时间复杂度。这种情况要避免其实很简单，就是加入唯一key，这样react就会根据key的变化，而不是根据顺序进行diff计算了。
+    shouldComponentUpdate(nextProps,nextState) false不render，true才render。如果啥也不反悔默认返回true。
+    在最新的react中，react给我们提供了React.PureComponent，官方也在早期提供了名为react-addons-pure-render-mixin插件来重新实现shouldComponentUpdate生命周期方法。
+### 多次render的优化。immutable与with-immutable-props-to-js
+    建议使用seamless-immutable
+    javascript中的对象一般都是可变的，因为使用了引用赋值，新的对象简单的引用了原始对象，改变新对象将影响到原始对象。这样做非常的昂贵，对cpu和内存会造成浪费。
+
+### 消耗性能的优化。针对react的diff算法加入key，防止最坏情况的发生
+    react为了追求高性能，采用了时间复杂度为O(N)来比较两个属性结构的区别。传统的比较两个树形结构，需要通过O(N^3)，这样性能很低。
+    两个节不一样最坏时间复杂度。O(N)的最坏时间复杂度。也就是说避免这种情况：组件A`<div><Todos /></div>`和组件B`<span><Todos /></span>`，这样一对比在第一个节点就发现不一样了，结果底下的全部都换掉。
+    两个节点一样但是顺序不一样，同样也会导致最坏时间复杂度。这种情况要避免其实很简单，就是加入唯一key，这样react就会根据key的变化，而不是根据顺序进行diff计算了。
+
+### 消耗内存的优化。render里面尽量减少新建变量和bind函数，传递参数是尽量减少传递参数的数量。
+    1、onClick={this.handleClick}构造函数每一次渲染的时候只会执行一遍；这种方法最好。这种写法初学者经常会遇到的一个问题就是undefined，这是因为没有使用箭头函数。普通函数中，this指向其函数的直接调用者；箭头函数中，this指向其定义环境，任何方法都改变不了其指向，如call（）、bind（）等；构造函数中，如果不使用new,则this指向window，如果使用new创建了一个实例，则this指向该实例。
+    2、onClick={this.handleClick.bind(this)}在每次render()的时候都会重新执行一遍函数。
+    3、onClick={()=>{this.handleClick()}}每一次render()的时候，都会生成一个新的箭头函数，即使两个箭头函数的内容是一样的。
+
+
+
 ```javascript
 // A
 <ul>
@@ -479,7 +609,7 @@ react15之后prop-types被剥离开来，而react-router里面的很多写法还
 ### redux优化
 
 # Immutable
-##  基本规范`state.set('key',value)`
+##  基本规范state.set('key',value)
   - 如果value是基础类型，比如number，string等，建议可以直接这样set进去。
   - 如果value是对象类型，比如map，list等，可以fromJS(value)再设置进去。
   - 因为`state.set('key',fromJS(1))`和`state.set('key',1)`，在`state.get('key')`是一样的。但是，`state.set('key',fromJS({a:1}))`和`state.set('key',{a:1})`，在`state.get('key')`是不一样的。前者get出来的是一个immutable对象，后者get出来的是一个js对象。
