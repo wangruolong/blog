@@ -1,5 +1,5 @@
 ---
-title: 前后端自动化构建
+title: 前端后端一体化自动构建
 author: 大大白
 date: 2018-03-01 11:48:00
 categories:
@@ -191,14 +191,14 @@ Maven是一个项目管理的综合工具。Maven提供了开发人员构建一�
         + warSourceExcludes和packagingExcludes的区别
             + warSourceExcludes是在`compile编译阶段`完成后，`package阶段`的第一步，过滤文件使其不被复制到目录下`program-name-0.1.0-SNAPSHOT`。
             + packagingExcludes是在`compile编译阶段`完成后，`package阶段`的第二步，过滤文件使其不被打包到文件内`program-name-0.1.0-SNAPSHOT.war`
-        + 也许有人会问，既然这里可以通过，那么第一个问题，js也是可以放webapp下面然后再忽略掉不就可以了？
+        + 也许有人会问，既然这里可以`Excludes`不要的文件，那么第一个问题，js也是可以放webapp下面然后再忽略掉不就可以了？
             + 遗憾的是maven-war-plugin是在其他插件（比如exec-maven-plugin）都执行完之后才执行，因为这个插件的作用是把所有编译后的文件copy到即将被打包的`program-name-0.1.0-SNAPSHOT`文件夹下面，所以它必须最后做，也就是说它必须等所有相关的插件都执行完了，才能执行。另外，假如把js放到webapp下面，即便是使用了`<warSourceIncludes />`来过滤复制的文件，但是因为在复制之前构建索引就要花费了大量的性能，以及复制的过程中消耗了大量的IO，会占用系统很大的资源，所以有可能会产生内存溢出的问题。
 
 ### 进阶问题。Maven构建的时候能否指定Coping webResouce 和 Coping resource ？ 答案是不能。为什么？
 - 我们前面讲到webResource是webapp里面的文件，resource是全局的一些资源文件。maven会根据自己定义好的标准目录结构，编译`src/main/java`复制`src/main/resources`和`src/main/webapp`到`program-name-0.1.0-SNAPSHOT`然后再打成war包。所以，只要是maven项目，就必须按照它定义好的目录结构来放文件。
 
 ## 总结
-- 前后端自动化构建有几个好处
+- 前后端一体化自动构建有几个好处
     * 发布的时候不用每次npm run build只要跟后端的同学一样提交代码，剩下的交给sdp去做。
     * config等全局性质的配置文件不用再通过url匹配出对应的值，只要交给sdp自动把对应环境的配置生效即可。
     * 后端的代码前端的同学可以很容易看到，有些问题甚至可以直接改掉，减少不必要的沟通。例如返回的字段错了`item`没加`s`等等显而易见的问题。
