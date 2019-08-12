@@ -5,7 +5,8 @@ date: 2018-03-01 11:48:00
 categories:
 - 构建相关
 tags:
-- 自动化构建
+- 前后端一体化构建
+- 自动构建
 ---
 
 1. 前端项目每次发布的时候需要手动 run build然后提交dist。难道就没有办法来解决这种没意义而又重复劳作的事情吗？
@@ -18,11 +19,10 @@ tags:
 
 <!-- more -->
 
-## 自动化构建
-### 前置知识点
-- Maven
-    
-Maven是一个项目管理的综合工具。Maven提供了开发人员构建一个完整的生命周期框架，简化和标准化项目建设过程。MAVEN定义了`标准的目录结构`。以下是Maven定义的标准目录Standard Directory Layout
+# 自动构建
+## 前置知识点
+### Maven
+    Maven是一个项目管理的综合工具。Maven提供了开发人员构建一个完整的生命周期框架，简化和标准化项目建设过程。MAVEN定义了`标准的目录结构`。以下是Maven定义的标准目录Standard Directory Layout
 
 | Directory     | Description   |
 |:-------------:|:-------------:|
@@ -42,14 +42,12 @@ Maven是一个项目管理的综合工具。Maven提供了开发人员构建一�
 
 在这里我们主要重点关注这三个目录和生命周期中的两个阶段
 - 三个目录
-    * Application/Library sources的目录`src/main/java`，本文后续简称为source。
-    * Application/Library resources的目录`src/main/resources`，本文后续简称为resource。
-    * Web application sources的目录`src/main/webapp`，本文后续简称为webResource。
+    + Application/Library sources的目录`src/main/java`，本文后续简称为source。
+    + Application/Library resources的目录`src/main/resources`，本文后续简称为resource。
+    + Web application sources的目录`src/main/webapp`，本文后续简称为webResource。
 - 两个阶段
-    * compile阶段
-    * package阶段
-        + coping相关文件
-        + 打成war包
+    + compile阶段
+    + package阶段（coping相关文件，打成war包）
         
 简单来说，compile阶段会编译`src/main/java`目录中的文件，package阶段要分两个步骤：第一步，复制相关的文件，把刚才compile阶段编译好的文件加上`src/main/webapp`和`src/main/resources`的文件复制到一个新的文件夹中一般默认情况下是`program-name-0.1.0-SNAPSHOT`；第二步，把`program-name-0.1.0-SNAPSHOT`打成war包`program-name-0.1.0-SNAPSHOT.war`。
 
@@ -65,7 +63,7 @@ Maven是一个项目管理的综合工具。Maven提供了开发人员构建一�
          |-- webapp
 ```
 接下来我们会通过几个问题来对自动化构建抽丝剥茧，最终使你对整个构建有一个全面的认识。
-### 思考几个问题
+## 思考几个问题
 1. js目录能不能放在webapp底下？为什么？
 2. 不同的环境配置了不同的webpack，如果不能手动run build，那我该如何让其自动选择对应环境的webpack？
 3. 进阶问题。Maven构建的时候能否指定Coping webResource 和 Coping resource ？ 答案是不能。为什么？
@@ -204,12 +202,4 @@ Maven是一个项目管理的综合工具。Maven提供了开发人员构建一�
     * 后端的代码前端的同学可以很容易看到，有些问题甚至可以直接改掉，减少不必要的沟通。例如返回的字段错了`item`没加`s`等等显而易见的问题。
     * 自从能看到服务端接口的代码后，跟后端的同学讨论问题就更有底气了。
     * 一个量化的数据是，原来用npm run build 因为工程大，项目文件多，每次run build 都要非常久，然后还要commit才能发布。后来经过改造，在`package打包阶段`过滤掉了许多文件大幅减少IO，同时只打包有用的文件，从整体上提高了发布速度，从原来的将近半个小时缩短为三分钟。
-
----
-<div align=center><h4>一分钱也是爱！感谢您的支持！</h4></div>
-<div style="display:flex;flex-wrap:wrap;justify-content:space-around;">
-        <div><img src="weixin.jpg" /></div>
-        <div><img src="zhifubao.jpg" /></div>
-</div>
-
 

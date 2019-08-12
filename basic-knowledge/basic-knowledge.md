@@ -8,7 +8,7 @@ tags:
 - 前端基础
 ---
 
-前端基础知识。
+前端基础知识。记录了在前端领域遇到的一些问题，以及解决这些问题的过程和方法。还有自己对一些知识概念的理解和领悟。
 
 <!-- more -->
 
@@ -211,25 +211,28 @@ console.log(myPath4);   //D:\myProgram\test\img\so
     安装："babel-plugin-transform-class-properties": "^6.24.1"
 
 #### 配置 transform-es3-member-expression-literals和transform-es3-property-literals
-    作用：像下面这种代码
+  作用：像下面这种代码
 ```js
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 module.exports = _main2.default;
 ```
-    在 IE8 下会直接报”缺少标识符、字符串或数字”的错。我们得在对象的属性上加 '' 才可以。就像下面这样：
+在 IE8 下会直接报”缺少标识符、字符串或数字”的错。我们得在对象的属性上加 '' 才可以。就像下面这样：
 ```js
 function _interopRequireDefault(obj) {
   return obj && obj.__esModule ? obj : { 'default': obj };
 }
 ```
-    至于原因，并不是 IE8 下对象的属性必须得加 '' 才行，而是 default 的问题，作为一个关键字，同样的问题还包括 catch。这两种情况，可以通过使用`transform-es3-property-literals`和`transform-es3-member-expression-literals`这两个插件搞定。总之，在平时写代码的时候避免使用关键字，或者保留字作为对象的属性值，尤其是在习惯不加引号的情况下。相关讨论：[Allow reserved words for properties](https://github.com/airbnb/javascript/issues/61)
-    安装："babel-plugin-transform-es3-member-expression-literals": "^6.22.0"
-    "babel-plugin-transform-es3-property-literals": "^6.22.0"
+至于原因，并不是 IE8 下对象的属性必须得加 '' 才行，而是 default 的问题，作为一个关键字，同样的问题还包括 catch。这两种情况，可以通过使用`transform-es3-property-literals`和`transform-es3-member-expression-literals`这两个插件搞定。总之，在平时写代码的时候避免使用关键字，或者保留字作为对象的属性值，尤其是在习惯不加引号的情况下。相关讨论：[Allow reserved words for properties](https://github.com/airbnb/javascript/issues/61)
+
+安装："babel-plugin-transform-es3-member-expression-literals": "^6.22.0"
+
+"babel-plugin-transform-es3-property-literals": "^6.22.0"
 
 ## babel在webpack中出现的问题
 ### Using removed Babel 5 option 
-    使用了被移除的babel5中的语法，是因为没有把node_modules排除掉。目录是相对package.json的路径。
-    因为node_modules里面有一些包是用了Babel 5中的语法，但是在这个loader里面又是被移除了，所以就报错了，根本解决办法就是把`node_modules`exclude掉。
+使用了被移除的babel5中的语法，是因为没有把node_modules排除掉。目录是相对package.json的路径。
+
+因为node_modules里面有一些包是用了Babel 5中的语法，但是在这个loader里面又是被移除了，所以就报错了，根本解决办法就是把`node_modules`exclude掉。
 ```js
 module: {
       rules: [
@@ -242,7 +245,6 @@ module: {
 }
 ```
 <img src="未exclude导致的babel报错.png" />
-
 
 # Eslint
 ## 需要引用的js包（package.json）
@@ -297,7 +299,7 @@ module: {
 
 ```
 ## 配置到webpack中
-    eslint-loader用于webpack的配置。
+eslint-loader用于webpack的配置。
 ```js
 module: {
     rules: [
@@ -310,9 +312,10 @@ module: {
 }
 ```
 ## 增加钩子让用户在提交前都执行以下eslint。
-    Git hooks made easy
-    在package.json增加husky依赖，同时配置commit之前和push之前需要执行的命令，强制用户执行eslint检查。
-```json
+Git hooks made easy
+
+在package.json增加husky依赖，同时配置commit之前和push之前需要执行的命令，强制用户执行eslint检查。
+```javascript
 {
   "husky": {
     "hooks": {
@@ -326,8 +329,8 @@ module: {
 }
 ```
 ## 推荐配置
-    可以访问`https://cn.eslint.org/demo/`勾选需要的配置，然后下载到本地使用。
-    0 = off, 1 = warn, 2 = error 
+可以访问`https://cn.eslint.org/demo/`勾选需要的配置，然后下载到本地使用。
+0 = off, 1 = warn, 2 = error 
 ```json
 {
   "parserOptions": {
@@ -390,16 +393,16 @@ module: {
 # webpack
 
 ## webpack性能优化（详见性能优化图片相关的优化）
-    1、合并和拆分。合并业务代码，拆分公共代码。splitChunks
-    2、图片优化。雪碧图。url-loader和file-loader配合只用。
-    3、压缩js和css。UglifyJsPlugin、OptimizeCSSAssetsPlugin
-    4、样式表用link引入，并置顶。
+- 合并和拆分。合并业务代码，拆分公共代码。splitChunks
+- 图片优化。雪碧图。url-loader和file-loader配合只用。
+- 压缩js和css。UglifyJsPlugin、OptimizeCSSAssetsPlugin
+- 样式表用link引入，并置顶。
 
 ## 样式表的Loader style-loader css-loader sass-loader
-    1、css-Loader把css通过<link/>引入，而style-loader把css放到<styles/>里面。
-    2、css-loader要配合MiniCssExtractPlugin.loader会把css进行抽取独立文件。
-    3、css-loader要启用modules=true，在代码里面才能import styles from 'style.css'。同时设置localIdentName规则对css的名称设置唯一id，防止全名冲突。
-    4、可以开启OptimizeCSSAssetsPlugin对css进行压缩。
+- css-Loader把css通过<link/>引入，而style-loader把css放到<styles/>里面。
+- css-loader要配合MiniCssExtractPlugin.loader会把css进行抽取独立文件。
+- css-loader要启用modules=true，在代码里面才能import styles from 'style.css'。同时设置localIdentName规则对css的名称设置唯一id，防止全名冲突。
+- 可以开启OptimizeCSSAssetsPlugin对css进行压缩。
 ```js
 {
   test: /\.(sc|c)ss$/,
@@ -422,8 +425,8 @@ module: {
 <img src="开启modules.png" />
 
 ## IP访问
-    在package.json的执行脚本中增加`--host 0.0.0.0`就可以通过ip访问了，缺点是刚开始启动的时候无法打开网页，需要等启动完成后输入地址重新访问。
-    也可以通过js获取本机ip
+在package.json的执行脚本中增加`--host 0.0.0.0`就可以通过ip访问了，缺点是刚开始启动的时候无法打开网页，需要等启动完成后输入地址重新访问。
+也可以通过js获取本机ip
 ```js
 devServer: {
   disableHostCheck: true,
@@ -446,18 +449,18 @@ devServer: {
 
 ## file-loader与url-loader
 ### 区别
-    1、相同点：都可以用来加载资源文件。
-    2、不同点：url-loader可以设置小于指定大小的文件直接打包到js里面，减少请求次数。file-loader则是把文件加载到指定目录。
+- 相同点：都可以用来加载资源文件。
+- 不同点：url-loader可以设置小于指定大小的文件直接打包到js里面，减少请求次数。file-loader则是把文件加载到指定目录。
 ### 联系
-    1、当有文件超过`url-loader`指定的文件大小后，不会被打包到js里面，但是它就变成需要`file-loader`加载否则会报错。
-    2、把小图片打包到js里面减少请求次数各有利弊。优点：可以减少小图片的请求次数，降低网络IO的请求次数。缺点：图片会被转换成base64的格式和js一起打包进入会带出新的问题，就是这样会导致css变大，这样加载单个css可能需要的时长会更长。另外，base64的算法是把原来的数据每3位用4位替换，这样原来如果是1，就会变成4/3，相当于比原来大了1/3。
-    3、因此是否需要使用url-loader把小图片打包到js文件需要权衡后再做决定。把小图片打包到js需要做的牺牲就是js文件会变大。
-    4、file-loader实现的是懒加载，只有在页面需要用到具体的元素才会加载，否则并不会加载。这样能提高整体的性能。
+- 当有文件超过`url-loader`指定的文件大小后，不会被打包到js里面，但是它就变成需要`file-loader`加载否则会报错。
+- 把小图片打包到js里面减少请求次数各有利弊。优点：可以减少小图片的请求次数，降低网络IO的请求次数。缺点：图片会被转换成base64的格式和js一起打包进入会带出新的问题，就是这样会导致css变大，这样加载单个css可能需要的时长会更长。另外，base64的算法是把原来的数据每3位用4位替换，这样原来如果是1，就会变成4/3，相当于比原来大了1/3。
+- 因此是否需要使用url-loader把小图片打包到js文件需要权衡后再做决定。把小图片打包到js需要做的牺牲就是js文件会变大。
+- file-loader实现的是懒加载，只有在页面需要用到具体的元素才会加载，否则并不会加载。这样能提高整体的性能。
 ### 用法
-    1、file-loader的publicPath属性，用来指定访问的路径。
-    2、file-loader的outputPath属性，用来指定打包输出的路径和访问的路径。建议使用outputPath属性，因为这个属性同时指定了打包输入和访问的路径，而publicPath只指定了访问的路径，如果你实际打包的路径不是这个就访问不到了。
-    3、url-loader的limit属性，用来指定小于限定的字节(Byte)则打包到js文件里面，超过限定的字节(Byte)则需要file-loader加载。
-    4、基本用法如下，小于8k的图片可以转成base64一起打入css，大于的则用file-loader加载。这样既可以减少图片请求数，又保证了css文件不会太大。
+- file-loader的publicPath属性，用来指定访问的路径。
+- file-loader的outputPath属性，用来指定打包输出的路径和访问的路径。建议使用outputPath属性，因为这个属性同时指定了打包输入和访问的路径，而publicPath只指定了访问的路径，如果你实际打包的路径不是这个就访问不到了。
+- url-loader的limit属性，用来指定小于限定的字节(Byte)则打包到js文件里面，超过限定的字节(Byte)则需要file-loader加载。
+- 基本用法如下，小于8k的图片可以转成base64一起打入css，大于的则用file-loader加载。这样既可以减少图片请求数，又保证了css文件不会太大。
 ```js
 {
   test:/\.(jpg|png|svg|gif)/,
@@ -474,16 +477,16 @@ devServer: {
 
 # React
 ## React中对XSS如何进行XSS攻击和防范
-    1、prerender / SSR 的 hydrate 过程会生成 html ，需要小心测试其中是否有 XSS 漏洞。
-    2、dangerouslySetInnerHTML、onload=字符串、href=字符串 等，都有可能造成 XSS 漏洞。
-    3、所有的用户输入都需要经过HTML实体编码，这里React已经帮我们做了很多，它会在运行时动态创建DOM节点然后填入文本内容（你也可以强制设置HTML内容，不过这样比较危险）
-    4、当你打算序列化某些状态并且传给客户端的时候，你同样需要进行HTML实体编码
-    5、Yahoo的工程师已经提供了一个Serialize JavaScript模块帮我们轻松地进行JSON转码与过滤，我们可以直接使用npm install --save serialize-javascript导入该模块，然后使用serialize方法替代内置的JSON.stringify方法:
+- prerender / SSR 的 hydrate 过程会生成 html ，需要小心测试其中是否有 XSS 漏洞。
+- dangerouslySetInnerHTML、onload=字符串、href=字符串 等，都有可能造成 XSS 漏洞。
+- 所有的用户输入都需要经过HTML实体编码，这里React已经帮我们做了很多，它会在运行时动态创建DOM节点然后填入文本内容（你也可以强制设置HTML内容，不过这样比较危险）。
+- 当你打算序列化某些状态并且传给客户端的时候，你同样需要进行HTML实体编码。
+- Yahoo的工程师已经提供了一个Serialize JavaScript模块帮我们轻松地进行JSON转码与过滤，我们可以直接使用npm install --save serialize-javascript导入该模块，然后使用serialize方法替代内置的JSON.stringify方法。
 ### XSS 漏洞的发生和修复
-    1、通常页面中包含的用户输入内容都在固定的容器或者属性内，以文本的形式展示。
-    2、攻击者利用这些页面的用户输入片段，拼接特殊格式的字符串，突破原有位置的限制，形成了代码片段。
-    3、攻击者通过在目标网站上注入脚本，使之在用户的浏览器上运行，从而引发潜在风险。
-    4、通过 HTML 转义，可以防止 XSS 攻击。
+- 通常页面中包含的用户输入内容都在固定的容器或者属性内，以文本的形式展示。
+- 攻击者利用这些页面的用户输入片段，拼接特殊格式的字符串，突破原有位置的限制，形成了代码片段。
+- 攻击者通过在目标网站上注入脚本，使之在用户的浏览器上运行，从而引发潜在风险。
+- 通过 HTML 转义，可以防止 XSS 攻击。
 ```html
 <input type="text" value="<%= getParameter("keyword") %>">
 <button>搜索</button>
@@ -491,7 +494,7 @@ devServer: {
   您搜索的关键词是：<%= getParameter("keyword") %>
 </div>
 ```
-    当浏览器请求 http://xxx/search?keyword="><script>alert('XSS');</script> 时，服务端会解析出请求参数 keyword，得到 "><script>alert('XSS');</script>，拼接到 HTML 中返回给浏览器。形成了如下的 HTML：
+当浏览器请求 `http://xxx/search?keyword="><script>alert('XSS');</script>`时，服务端会解析出请求参数 keyword，得到 `"><script>alert('XSS');</script>`，拼接到 HTML 中返回给浏览器。形成了如下的 HTML：
 ```html
 <input type="text" value=""><script>alert('XSS');</script>">
 <button>搜索</button>
@@ -499,9 +502,9 @@ devServer: {
   您搜索的关键词是："><script>alert('XSS');</script>
 </div>
 ```
-    浏览器无法分辨出 <script>alert('XSS');</script> 是恶意代码，因而将其执行。这里不仅仅 div 的内容被注入了，而且 input 的 value 属性也被注入， alert 会弹出两次。
+浏览器无法分辨出 `<script>alert('XSS');</script>` 是恶意代码，因而将其执行。这里不仅仅 div 的内容被注入了，而且 input 的 value 属性也被注入， alert 会弹出两次。
 
-    解决办法
+解决办法
 ```html
 <input type="text" value="<%= escapeHTML(getParameter("keyword")) %>">
 <button>搜索</button>
@@ -509,7 +512,7 @@ devServer: {
   您搜索的关键词是：<%= escapeHTML(getParameter("keyword")) %>
 </div>
 ```
-    escapeHTML() 按照如下规则进行转义：|字符|转义后的字符| |-|-| |&|&amp;| |<|&lt;| |>|&gt;| |"|&quot;| |'|&#x27;| |/|&#x2F;|经过了转义函数的处理后，最终浏览器接收到的响应为：
+escapeHTML() 按照如下规则进行转义：|字符|转义后的字符| |-|-| |&|&amp;| |<|&lt;| |>|&gt;| |"|&quot;| |'|&#x27;| |/|&#x2F;|经过了转义函数的处理后，最终浏览器接收到的响应为
 ```html
 <input type="text" value="&quot;&gt;&lt;script&gt;alert(&#x27;XSS&#x27;);&lt;&#x2F;script&gt;">
 <button>搜索</button>
@@ -517,11 +520,11 @@ devServer: {
   您搜索的关键词是：&quot;&gt;&lt;script&gt;alert(&#x27;XSS&#x27;);&lt;&#x2F;script&gt;
 </div>
 ```
-    恶意代码都被转义，不再被浏览器执行，而且搜索词能够完美的在页面显示出来。
+恶意代码都被转义，不再被浏览器执行，而且搜索词能够完美的在页面显示出来。
 
 ### 注意特殊的 HTML 属性、JavaScript API
-    1、做了 HTML 转义，并不等于高枕无忧。
-    2、对于链接跳转，如 <a href="xxx" 或 location.href="xxx"，要检验其内容，禁止以 javascript: 开头的链接，和其他非法的 scheme。
+- 做了 HTML 转义，并不等于高枕无忧。
+- 对于链接跳转，如 <a href="xxx" 或 location.href="xxx"，要检验其内容，禁止以 javascript: 开头的链接，和其他非法的 scheme。
 ```html
 <a href="<%= escapeHTML(getParameter("redirect_to")) %>">跳转...</a>
 ```
@@ -544,55 +547,52 @@ if (valid) {
 }
 ```
 ### 根据上下文采用不同的转义规则
-    1、HTML 转义是非常复杂的，在不同的情况下要采用不同的转义规则。如果采用了错误的转义规则，很有可能会埋下 XSS 隐患。
-    2、应当尽量避免自己写转义库，而应当采用成熟的、业界通用的转义库。
-
+- HTML 转义是非常复杂的，在不同的情况下要采用不同的转义规则。如果采用了错误的转义规则，很有可能会埋下 XSS 隐患。
+- 应当尽量避免自己写转义库，而应当采用成熟的、业界通用的转义库。
 
 ## 漏洞总结
-    1、在 HTML 中内嵌的文本中，恶意内容以 script 标签形成注入。
-    2、在内联的 JavaScript 中，拼接的数据突破了原本的限制（字符串，变量，方法名等）。
-    3、在标签属性中，恶意内容包含引号，从而突破属性值的限制，注入其他属性或者标签。
-    4、在标签的 href、src 等属性中，包含 javascript: 等可执行代码。
-    5、在 onload、onerror、onclick 等事件中，注入不受控制代码。
-    6、在 style 属性和标签中，包含类似 background-image:url("javascript:..."); 的代码（新版本浏览器已经可以防范）。
-    7、在 style 属性和标签中，包含类似 expression(...) 的 CSS 表达式代码（新版本浏览器已经可以防范）。
-    8、总之，如果开发者没有将用户输入的文本进行合适的过滤，就贸然插入到 HTML 中，这很容易造成注入漏洞。攻击者可以利用漏洞，构造出恶意的代码指令，进而利用恶意代码危害数据安全。
-
+- 在 HTML 中内嵌的文本中，恶意内容以 script 标签形成注入。
+- 在内联的 JavaScript 中，拼接的数据突破了原本的限制（字符串，变量，方法名等）。
+- 在标签属性中，恶意内容包含引号，从而突破属性值的限制，注入其他属性或者标签。
+- 在标签的 href、src 等属性中，包含 javascript: 等可执行代码。
+- 在 onload、onerror、onclick 等事件中，注入不受控制代码。
+- 在 style 属性和标签中，包含类似 background-image:url("javascript:..."); 的代码（新版本浏览器已经可以防范）。
+- 在 style 属性和标签中，包含类似 expression(...) 的 CSS 表达式代码（新版本浏览器已经可以防范）。
+- 总之，如果开发者没有将用户输入的文本进行合适的过滤，就贸然插入到 HTML 中，这很容易造成注入漏洞。攻击者可以利用漏洞，构造出恶意的代码指令，进而利用恶意代码危害数据安全。
 
 ## react router
-    未装propTypes报错Cannot read property 'array' of undefined
-    react15之后prop-types被剥离开来，而react-router里面的很多写法还是react.proptypes这样肯定报错。所以有两种方案，一种是把react降到15之前（不包括15），另外一种就是把react-router升级到3.x以上版本。为什么不直接升级到4.x因为我试用了一下发现是服务端渲染，而且一大堆配套的都要升级，因此升级到3.x是最明智的选择。
+- 未装propTypes报错Cannot read property 'array' of undefined
+- react15之后prop-types被剥离开来，而react-router里面的很多写法还是react.proptypes这样肯定报错。所以有两种方案，一种是把react降到15之前（不包括15），另外一种就是把react-router升级到3.x以上版本。
+- 为什么不直接升级到4.x因为我试用了一下发现是服务端渲染，而且一大堆配套的都要升级，因此升级到3.x是最明智的选择。
 <img src="未装propTypes报错1.png" />
 <img src="未装propTypes报错2.png" />
 
 ## redux saga
-    当我dispatch一个action后，这个先发到reducer
-    然后才走到saga，saga拿到后put了一个新的action这个新的action才是我们要处理的。
-    简单来说，当我们dispatch一个action后，先发到reducer，然后saga同时也收到了一份，这时候saga可以put出新的action给reducer接收。
+当我dispatch一个action后，这个先发到reducer。然后才走到saga，saga拿到后put了一个新的action这个新的action才是我们要处理的。
+
+简单来说，当我们dispatch一个action后，先发到reducer，然后saga同时也收到了一份，这时候saga可以put出新的action给reducer接收。
 
 ## react性能优化
-
 ### 多次render的优化。合理使用container和dump
-    有些组件的数据都是从父组件一直传递到子组件，这样当父组件渲染的时候，子组件也会跟着渲染。所以比如list，dialog等类型的组件我都是让在redux里面，然后container进行connect。只有这些变化的时候才会重新render，否则父组件重新render也不会让子组件重新render因为，子组件的props都没有变化。
+有些组件的数据都是从父组件一直传递到子组件，这样当父组件渲染的时候，子组件也会跟着渲染。所以比如list，dialog等类型的组件我都是让在redux里面，然后container进行connect。只有这些变化的时候才会重新render，否则父组件重新render也不会让子组件重新render因为，子组件的props都没有变化。
 ### 多次render的优化。定制shouldComponentUpdate函数
-    shouldComponentUpdate(nextProps,nextState) false不render，true才render。如果啥也不反悔默认返回true。
-    在最新的react中，react给我们提供了React.PureComponent，官方也在早期提供了名为react-addons-pure-render-mixin插件来重新实现shouldComponentUpdate生命周期方法。
+shouldComponentUpdate(nextProps,nextState) false不render，true才render。如果啥也不反悔默认返回true。在最新的react中，react给我们提供了React.PureComponent，官方也在早期提供了名为react-addons-pure-render-mixin插件来重新实现shouldComponentUpdate生命周期方法。
 ### 多次render的优化。immutable与with-immutable-props-to-js
-    建议使用seamless-immutable
-    javascript中的对象一般都是可变的，因为使用了引用赋值，新的对象简单的引用了原始对象，改变新对象将影响到原始对象。这样做非常的昂贵，对cpu和内存会造成浪费。
+建议使用seamless-immutable。javascript中的对象一般都是可变的，因为使用了引用赋值，新的对象简单的引用了原始对象，改变新对象将影响到原始对象。这样做非常的昂贵，对cpu和内存会造成浪费。
 
 ### 消耗性能的优化。针对react的diff算法加入key，防止最坏情况的发生
-    react为了追求高性能，采用了时间复杂度为O(N)来比较两个属性结构的区别。传统的比较两个树形结构，需要通过O(N^3)，这样性能很低。
-    两个节不一样最坏时间复杂度。O(N)的最坏时间复杂度。也就是说避免这种情况：组件A`<div><Todos /></div>`和组件B`<span><Todos /></span>`，这样一对比在第一个节点就发现不一样了，结果底下的全部都换掉。
-    两个节点一样但是顺序不一样，同样也会导致最坏时间复杂度。这种情况要避免其实很简单，就是加入唯一key，这样react就会根据key的变化，而不是根据顺序进行diff计算了。
+react为了追求高性能，采用了时间复杂度为O(N)来比较两个属性结构的区别。传统的比较两个树形结构，需要通过O(N^3)，这样性能很低。
+
+两个节不一样最坏时间复杂度。O(N)的最坏时间复杂度。也就是说避免这种情况：组件A`<div><Todos /></div>`和组件B`<span><Todos /></span>`，这样一对比在第一个节点就发现不一样了，结果底下的全部都换掉。
+
+两个节点一样但是顺序不一样，同样也会导致最坏时间复杂度。这种情况要避免其实很简单，就是加入唯一key，这样react就会根据key的变化，而不是根据顺序进行diff计算了。
 
 ### 消耗内存的优化。render里面尽量减少新建变量和bind函数，传递参数是尽量减少传递参数的数量。
-    1、onClick={this.handleClick}构造函数每一次渲染的时候只会执行一遍；这种方法最好。这种写法初学者经常会遇到的一个问题就是undefined，这是因为没有使用箭头函数。普通函数中，this指向其函数的直接调用者；箭头函数中，this指向其定义环境，任何方法都改变不了其指向，如call（）、bind（）等；构造函数中，如果不使用new,则this指向window，如果使用new创建了一个实例，则this指向该实例。
-    2、onClick={this.handleClick.bind(this)}在每次render()的时候都会重新执行一遍函数。
-    3、onClick={()=>{this.handleClick()}}每一次render()的时候，都会生成一个新的箭头函数，即使两个箭头函数的内容是一样的。
+onClick={this.handleClick}构造函数每一次渲染的时候只会执行一遍；这种方法最好。这种写法初学者经常会遇到的一个问题就是undefined，这是因为没有使用箭头函数。普通函数中，this指向其函数的直接调用者；箭头函数中，this指向其定义环境，任何方法都改变不了其指向，如call（）、bind（）等；构造函数中，如果不使用new,则this指向window，如果使用new创建了一个实例，则this指向该实例。
 
+onClick={this.handleClick.bind(this)}在每次render()的时候都会重新执行一遍函数。
 
-
+onClick={()=>{this.handleClick()}}每一次render()的时候，都会生成一个新的箭头函数，即使两个箭头函数的内容是一样的。
 ```javascript
 // A
 <ul>
@@ -610,48 +610,21 @@ if (valid) {
 
 # Immutable
 ##  基本规范state.set('key',value)
-  - 如果value是基础类型，比如number，string等，建议可以直接这样set进去。
-  - 如果value是对象类型，比如map，list等，可以fromJS(value)再设置进去。
-  - 因为`state.set('key',fromJS(1))`和`state.set('key',1)`，在`state.get('key')`是一样的。但是，`state.set('key',fromJS({a:1}))`和`state.set('key',{a:1})`，在`state.get('key')`是不一样的。前者get出来的是一个immutable对象，后者get出来的是一个js对象。
-  - 所以综上所述，在set的时候，如果是基础类型可以直接set，如果是对象类型要先`fromJS()`再set进去。
-  - 以此类推`state.merge({'key2',value2})`这个value也是一样的道理。
+- 如果value是基础类型，比如number，string等，建议可以直接这样set进去。
+- 如果value是对象类型，比如map，list等，可以fromJS(value)再设置进去。
+- 因为`state.set('key',fromJS(1))`和`state.set('key',1)`，在`state.get('key')`是一样的。但是，`state.set('key',fromJS({a:1}))`和`state.set('key',{a:1})`，在`state.get('key')`是不一样的。前者get出来的是一个immutable对象，后者get出来的是一个js对象。
+- 所以综上所述，在set的时候，如果是基础类型可以直接set，如果是对象类型要先`fromJS()`再set进去。
+- 以此类推`state.merge({'key2',value2})`这个value也是一样的道理。
 
 ## 注意事项
-  - 不要在container里面toJS()，因为toJS()之后会是一个新的对象，导致react重新render。
-  - 可以配合`with-immutable-props-to-js`使用`const TodoListSmart = connect(mapStateToProps,mapDispatchToProps)(WithImmutablePropsToJs(TodoListDump))`。这样可以保证`TodoListDump`获取到的props如果是同一个值不会产生新的对象。
-
+- 不要在container里面toJS()，因为toJS()之后会是一个新的对象，导致react重新render。
+- 可以配合`with-immutable-props-to-js`使用`const TodoListSmart = connect(mapStateToProps,mapDispatchToProps)(WithImmutablePropsToJs(TodoListDump))`。这样可以保证`TodoListDump`获取到的props如果是同一个值不会产生新的对象。
 
 # 单元测试
 - Karma 测试框架，提供多浏览器环境跑单元测试的能力，包括headless浏览器。
 - Mocha 测试框架，提供兼容浏览器和Node环境的单元测试能力，可使用karma-mocha集成进Karma中。
 - Chai 断言库，支持should,expect,assert不同类型的断言测试函数，可使用karma-chai集成进Karma中。
 - 大部分单元测试都是基于上述三个库联合使用而展开的。Karma-webpack主要提供的能力，是为Karma中加载的测试脚本提供模块化加载的能力。
-
-# async/await、await和sleep区别、怎么理解多线程、setTimeout()，newPromise()，串行执行Promise（redux-saga）
-https://www.jianshu.com/p/f478f15c1671
-https://juejin.im/post/5b1ffff96fb9a01e345ba704
-- async/await不要乱用，否则会增加没必要的时间浪费。比如原来可以并行执行的两个方法，使用了await就导致时间边长了。
-```js
-a(() => {
-  b();
-});
-c(() => {
-  d();
-});
-
-await a();
-await b();
-await c();
-await d();
-
-a(() => {
-  b(() => {
-    c(() => {
-      d();
-    });
-  });
-});
-```
 
 # 设计领域
 
@@ -715,18 +688,16 @@ export class BaseComponent extends Component {
 - 单一职责原则（Single Responsibility Principle）
   - 优点：类的复杂性降低，可读性提高。一个类应该只有一个发生变化的原因。类、函数和接口都要要遵循单一职责原则。遵守单一职责原则，将不同的职责封装到不同的类或模块中。
   - 举例：比如常用的radio组件，一个是button，另一个是group。其实很简单就是一个选中操作，但是经常会有需求出现一个group中只能选中一个radio，在这里会分成两个组件。一个是radio很简单就是一个render组件，另一个是控制子节点选中的状态，也很简单用来维护状态就行了。
-
 - 接口隔离原则（Interface Segregation Principle）
   - 特点：应当为客户端提供尽可能小的单独的接口，而不是提供大的总的接口。使用多个专门的接口比使用单一的总接口要好。
   - 举例：比如tab切换后要选中第1项，那么我会提供两个接口来给外部调用，一个是切换tab，另一个是选中第1项。
-
 - 迪米特法则（Law Of Demeter）
   - 特点：又叫最少知识原则，一个软件实体应当尽可能少的与其他实体发生相互作用。
   - 举例：dependencies从开发人员的角度出发是开闭原则，从引擎的角度出发是迪米特法则。还有类似的比如
-
 - 开闭原则（Open Close Principle）
   - 特点：面向扩展开放，面向修改关闭。稳定，灵活，可扩展。
   - 举例：组件通信，字段之间的关联关系。通过dependencies，中介者模式。引擎把组件之间需要互相调用的所有数据都传递出去给中介者，用户可以在中介者里面修改组件如何通讯。比如说一个评分组件可以评1~5分，1分和5分要说明原因所以会出现一个textarea的组件，2-4分不用说明原因。那么引擎不能把这个逻辑直接实现，而是把组件之间的状态都传递出去，给用户自己去实现。不然将来万一要变就会导致需要重新修改引擎，所以引擎把重心放在组件的数据状态传递出去，给用户自己实现，因为需要控制的权限已经在IoC容器里面，完全可以达到目的。
+
 ### 依赖抽象不要依赖具体，用基类定义子类替换，
 - 依赖倒置原则（Dependence Inversion Principle）
   - 特点：实现尽量依赖抽象，不依赖具体实现。
@@ -740,7 +711,6 @@ export class BaseComponent extends Component {
 - 组合/聚合复用原则（Composite/Aggregate Reuse Principle CARP）尽量使用合成/聚合达到复用，尽量少用继承。
   - 特点： 一个类中有另一个类的对象。对比继承子类会被父类污染。但是如果是非常明确的一定必须要有的，继承依然可以使用。组合比较灵活。
 
- 
 # 其他
 ## 状态码
     n200 OK，当GET请求成功完成，DELETE或者PATCH请求同步完成。
@@ -764,23 +734,5 @@ export class BaseComponent extends Component {
     n501 Not Implemented：客户端发起的请求超出服务器的能力范围(比如，使用了服务器不支持的请求方法)时，使用此状态码。
     n502 Bad Gateway：代理使用的服务器遇到了上游的无效响应
     n503 Service Unavailable：服务器目前无法为请求提供服务，但过一段时间就可以恢复服务
-
-
-- 前端性能优化、PWA（service worker，IndexedDB，manifest，push notification）
-
-
-
-- 浏览器事件循环，队列优先级不同
-- Typescript
-- JS基础
-- 数据库同步，升级indexDB
-
-
-- 项目中最难的问题如何解决
-  组件的通信机制
-- css基础：position
-  flex布局
-- 项目框架
-  webpack 
 
 

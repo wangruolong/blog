@@ -7,32 +7,17 @@ categories:
 tags: 
 - 设计思想
 ---
-
 本文描述的表单引擎是一个采用了单向数据流，双向数据绑定，三大事件机制，四大核心驱动，打通五脏六腑七经八脉，按照九大设计模式为指导思想的十全十美的表单引擎。本文将带你走进表单引擎的世界，为你阐述其设计思想，让你领悟其设计精髓！
-
 <!-- more -->
-
 # 设计思想
 表单引擎在创建组件的时候为了让组件实例在容器中只能有一个采用了单例模式。在设计组件上采用了优雅的装饰者模式。组件之间互相访问采用的是中介者模式。
+
 ##  设计模式
-- 创建型
-    + 单例模式
-- 结构型
-    + 适配器模式
-    + 过滤器模式
-    + 组合模式
-    + 装饰器模式
-    + 外观模式
-    + 代理模式
-- 行为型
-    + 解释器模式
-    + 中介者模式
-    + 观察者模式
-    + 策略模式
-    + 访问者模式
+创建型：单例模式。结构型：适配器模式，过滤器模式，组合模式，装饰器模式，外观模式，代理模式。行为型：解释器模式，中介者模式，观察者模式，策略模式，访问者模式。
 
 ## 控制反转（Inversion of Control）
 表单引擎将组件`component`注入到`IoC`容器里面，并通过组件的`key`进行查找。这里使用了`依赖注入（Dependency Injection）`和`依赖查找（Dependency Lookup）`的思想。并通过单例模式的方式让组件在容器中保持唯一。
+
 依赖注入和依赖查找是控制反转（Inversion of Control，缩写为IoC）的重要思想，简单来说就是把原来自己的控制权限转交给别人。
 - 依赖注入（Dependency Injection）：将组件注入到容器。
 - 依赖查找（Dependency Lookup）：在容器中找到组件。
@@ -84,6 +69,7 @@ let eventConfig = {
     DSL: '(function (args){if(args===true){return 4} else {return 2}})'//自定义方法
 }
 ```
+
 ## 规范
 - 组件必须装饰@FormEngine，必须继承BaseComponent。
 - 组件必须以函数驱动为导向，出入格式要规范参数全部用数组传递等等。
@@ -93,7 +79,6 @@ let eventConfig = {
 每个组件把自己转交给IoC容器，然后继承BaseComponent在切面中编写代码。
 - 实例化IoC容器，并且把组件注入到容器中。
 - 绑定aop切面，让子类可以方便的使用aop切面。
-
 ```javascript
 export class BaseComponent extends Component {
     static displayName = 'BaseComponent'
@@ -116,25 +101,19 @@ export class BaseComponent extends Component {
 ```
 
 ## 核心类FormEngine
-- 为什么要使用反向继承？
-    + 从宏观的角度来看
-        * 继承子组件的属性，并且可以控制子组件。
-    + 从微观的角度来看
-        * 继承了子组件就可以把AOP传给子组件，子组件可以使用AOP进行切面绑定。但是这个作用，属性代理也可以实现。
-        * 只有反向继承子组件，才能使用子组件继承自BaseComponent的IoC容器，然后再通过IoC容器控制其他组件。针对这一点，属性代理无法实现。如果不反向继承，这将无法获得IoC容器。
-        
-        * 使用反向继承的前提下，不使用this.IoC，而是使用this.props.IoC可不可以？
-        不可以。这里的this指向EC，不是指向子组件。EC的props里面并没有IoC容器，EC的IoC容器是继承自子组件子组件继承自BaseComponent的IoC容器。
-        
-        * 使用属性代理的前提下，this.IoC和this.props.IoC有什么区别？
-         属性代理没有继承子组件所以没有this.IoC，同时也没有人传递给他props，所以这里的this.props.IoC也是undefined
-
-        * 使用反向的前提下，this.IoC和this.props.IoC有什么区别？
-         反向继承了子组件子组件继承了BaseComponent，所以EC是有this.IoC的。但是，这里的this指向的是EC并不是指向子组件，所以this.props.IoC并没有值。
-
-    + 综上所述。这里一定要用反向继承，并且一定要用this.IoC来获取容器以此来控制组件。
-
-
+### 为什么要使用反向继承？
+- 从宏观的角度来看
+  - 继承子组件的属性，并且可以控制子组件。
+- 从微观的角度来看
+  - 继承了子组件就可以把AOP传给子组件，子组件可以使用AOP进行切面绑定。但是这个作用，属性代理也可以实现。
+  - 只有反向继承子组件，才能使用子组件继承自BaseComponent的IoC容器，然后再通过IoC容器控制其他组件。针对这一点，属性代理无法实现。如果不反向继承，这将无法获得IoC容器。
+### 使用反向继承的前提下，不使用this.IoC，而是使用this.props.IoC可不可以？
+不可以。这里的this指向EC，不是指向子组件。EC的props里面并没有IoC容器，EC的IoC容器是继承自子组件子组件继承自BaseComponent的IoC容器。
+### 使用属性代理的前提下，this.IoC和this.props.IoC有什么区别？
+属性代理没有继承子组件所以没有this.IoC，同时也没有人传递给他props，所以这里的this.props.IoC也是undefined
+### 使用反向的前提下，this.IoC和this.props.IoC有什么区别？
+反向继承了子组件子组件继承了BaseComponent，所以EC是有this.IoC的。但是，这里的this指向的是EC并不是指向子组件，所以this.props.IoC并没有值。
+### 综上所述。这里一定要用反向继承，并且一定要用this.IoC来获取容器以此来控制组件。
 ```javascript
 export function FormEngine(WrappedComponent) {
     let ProxyComponent = new Proxy(WrappedComponent, handler)
@@ -207,8 +186,7 @@ let handler = {
 
 # 如何接入
 - 加入@FormEngine注解，把自己注入到IoC容器中。
-- 继承BaseComponent，可以使用ioc和aop。
-
+- 继承BaseComponent，可以使用IoC容器和AOP切面。
 ```javascript
 @FormEngine
 export default class EditMode extends BaseComponent {
@@ -349,10 +327,3 @@ toolMng.registerTool('audio_recorder', require('./audioRecorder'))
 const comp = toolMng.getTool(tool.key, tool.version)//取出配置信息的key
 React.createElement(comp || ToolNotFound, props)
 ```
-
----
-<div align=center><h4>一分钱也是爱！感谢您的支持！</h4></div>
-<div style="display:flex;flex-wrap:wrap;justify-content:space-around;">
-        <div><img src="weixin.jpg" /></div>
-        <div><img src="zhifubao.jpg" /></div>
-</div>
