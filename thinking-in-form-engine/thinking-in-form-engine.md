@@ -195,6 +195,7 @@ let handler = {
 # 如何接入
 - 加入@FormEngine注解，把自己注入到IoC容器中。
 - 继承BaseComponent，可以使用IoC容器和AOP切面。
+
 ```javascript
 @FormEngine
 export default class EditMode extends BaseComponent {
@@ -326,12 +327,14 @@ export default new class ToolsMng {
 ```
 
 - ToolsInit类
+
 ```javascript
 import toolMng from './toolsMng'
 toolMng.registerTool('audio_recorder', require('./audioRecorder'))
 ```
 
 - 具体创建方式
+
 ```javascript
 const comp = toolMng.getTool(tool.key, tool.version)//取出配置信息的key
 React.createElement(comp || ToolNotFound, props)

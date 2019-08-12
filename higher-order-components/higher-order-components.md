@@ -605,20 +605,25 @@ ReactDOM.render(<EnhancedExample date={(new Date).toLocaleDateString()} callback
 ### 将不相关的props属性传递给包裹组件
 - 高阶组件应该传递与它要实现的功能点无关的props属性。
 - 向包裹组件注入props属性，一般都是高阶组件的state状态或实例方法。
+
 ### 最大化使用组合
 ```javascript
 const EnhancedComponent = connect(commentSelector)(withRouter(WrappedComponent))
 const enhance = compose(connect(commentSelector),withRouter)
 const EnhancedComponent = enhance(WrappedComponent)
 ```
+
 ### 包装显示名字以便于调试
 当组件应用到高阶组件中后，显示的组件都一致，就无法发区分是那个wrapped组件被高阶组件包装了。所以要显示的指定displayName一般是“高阶组件名称+wrapped组件名称”。
+
 ## 注意事项
 ### 不要在render函数中使用高阶组件
 每一次render函数调用都会创建一个新的EnhancedComponent实例。
+
 ### 必须将静态方法做拷贝
 - 当使用高阶组件包装组件，原始组件被容器组件包裹，也就意味着新组件会丢失原始组件的所有静态方法。
 - 可以使用hoist-non-react-statics来帮你自动处理，它会自动拷贝所有非React的静态方法。
+
 ### Refs属性不能传递
 - refs是一个伪属性，React对它进行了特殊处理。
 - 如果你向一个由高级组件创建的组件的元素添加ref应用，那么ref指向的是最外层容器组件实例的，而不是包裹组件。
@@ -639,7 +644,6 @@ const EnhancedComponent = enhance(WrappedComponent)
 - 中介者模式
 
 # 关联阅读
-
 - 深入理解 React 高阶组件
 http://www.jianshu.com/p/0aae7d4d9bc1
 - Facebook对高阶组件的官方文档
