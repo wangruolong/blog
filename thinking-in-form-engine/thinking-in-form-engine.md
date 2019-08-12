@@ -21,6 +21,7 @@ tags:
 依赖注入和依赖查找是控制反转（Inversion of Control，缩写为IoC）的重要思想，简单来说就是把原来自己的控制权限转交给别人。
 - 依赖注入（Dependency Injection）：将组件注入到容器。
 - 依赖查找（Dependency Lookup）：在容器中找到组件。
+
 ```javascript
 class IoC {
     constructor() {
@@ -46,6 +47,7 @@ class IoC {
 面向切面编程，通过预编译方式和运行期动态代理实现程序功能的统一维护的一种技术。
 - 预编译（precompile）：编译时把当前的方法放入AOP中。
 - 运行时（runtime）：运行时AOP中会动态的把需要的方法织入。
+
 ```javascript
  <RadioGroup options={options}
              onChange={this._aop.bindArgs(this._onChange, this, { target: { value: !this.state.value } })}
@@ -79,6 +81,7 @@ let eventConfig = {
 每个组件把自己转交给IoC容器，然后继承BaseComponent在切面中编写代码。
 - 实例化IoC容器，并且把组件注入到容器中。
 - 绑定aop切面，让子类可以方便的使用aop切面。
+
 ```javascript
 export class BaseComponent extends Component {
     static displayName = 'BaseComponent'
@@ -107,13 +110,18 @@ export class BaseComponent extends Component {
 - 从微观的角度来看
   - 继承了子组件就可以把AOP传给子组件，子组件可以使用AOP进行切面绑定。但是这个作用，属性代理也可以实现。
   - 只有反向继承子组件，才能使用子组件继承自BaseComponent的IoC容器，然后再通过IoC容器控制其他组件。针对这一点，属性代理无法实现。如果不反向继承，这将无法获得IoC容器。
+
 ### 使用反向继承的前提下，不使用this.IoC，而是使用this.props.IoC可不可以？
 不可以。这里的this指向EC，不是指向子组件。EC的props里面并没有IoC容器，EC的IoC容器是继承自子组件子组件继承自BaseComponent的IoC容器。
+
 ### 使用属性代理的前提下，this.IoC和this.props.IoC有什么区别？
 属性代理没有继承子组件所以没有this.IoC，同时也没有人传递给他props，所以这里的this.props.IoC也是undefined
+
 ### 使用反向的前提下，this.IoC和this.props.IoC有什么区别？
 反向继承了子组件子组件继承了BaseComponent，所以EC是有this.IoC的。但是，这里的this指向的是EC并不是指向子组件，所以this.props.IoC并没有值。
+
 ### 综上所述。这里一定要用反向继承，并且一定要用this.IoC来获取容器以此来控制组件。
+
 ```javascript
 export function FormEngine(WrappedComponent) {
     let ProxyComponent = new Proxy(WrappedComponent, handler)
@@ -298,7 +306,8 @@ export default class EditMode extends BaseComponent {
 ```
 
 ## 动态加载组件库
-- ToolsMng类
+ToolsMng类
+
 ```javascript
 export default new class ToolsMng {
 	constructor() {
