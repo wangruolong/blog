@@ -627,6 +627,32 @@ if (valid) {
 - Chai 断言库，支持should,expect,assert不同类型的断言测试函数，可使用karma-chai集成进Karma中。
 - 大部分单元测试都是基于上述三个库联合使用而展开的。Karma-webpack主要提供的能力，是为Karma中加载的测试脚本提供模块化加载的能力。
 
+# async/await、await和sleep区别、怎么理解多线程、setTimeout()，newPromise()，串行执行Promise（redux-saga）
+https://www.jianshu.com/p/f478f15c1671
+https://juejin.im/post/5b1ffff96fb9a01e345ba704
+- async/await不要乱用，否则会增加没必要的时间浪费。比如原来可以并行执行的两个方法，使用了await就导致时间边长了。
+```js
+a(() => {
+  b();
+});
+c(() => {
+  d();
+});
+
+await a();
+await b();
+await c();
+await d();
+
+a(() => {
+  b(() => {
+    c(() => {
+      d();
+    });
+  });
+});
+```
+
 # 设计领域
 
 ## 控制反转
@@ -743,16 +769,15 @@ export class BaseComponent extends Component {
 - 前端性能优化、PWA（service worker，IndexedDB，manifest，push notification）
 
 
-- setTimeout()，newPromise()，串行执行Promise（redux-saga）
-- async/await、await和sleep区别、怎么理解多线程
+
 - 浏览器事件循环，队列优先级不同
-- 项目中最难的问题如何解决（组件的通信机制）
 - Typescript
 - JS基础
 - 数据库同步，升级indexDB
 
 
-- 英文阅读
+- 项目中最难的问题如何解决
+  组件的通信机制
 - css基础：position
   flex布局
 - 项目框架
