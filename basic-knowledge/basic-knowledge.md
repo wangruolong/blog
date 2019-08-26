@@ -13,58 +13,64 @@ tags:
 <!-- more -->
 
 #  算法
+
 ## 快速排序
+
 ## 选择排序
+
 ## 堆排序
 
 ## Fisher-Yates shuffle算法
+
 - 算法描述：该算法是用来打乱数组的顺序。
 - 实现描述：简单来说就是从左往右循环数组的每个项，每次把当前项和当前项之后的项（包括当前项）随机选择一个进行交换，但是如果随机到自己则不进行交换。
 - 复杂度：
 - 具体实现：
-  ```js
-    shuffle(array){
-      const endIndex = array.length - 1//最后一位只能选到自己，自己和自己不交换，所以最后一位就不考虑，所以把数组的长度减去1。
-      for (let i = 0; i <= endIndex; i++){
-          //从当前位置之后（包括当前位置）随机取一个值进行交换。
-          const j = i + Math.floor(Math.random() * (array.length - i));
-          //es6解构赋值
-          [array[i], array[j]] = [array[j], array[i]]
-      }
-      return array
+
+```js
+  shuffle(array){
+    const endIndex = array.length - 1//最后一位只能选到自己，自己和自己不交换，所以最后一位就不考虑，所以把数组的长度减去1。
+    for (let i = 0; i <= endIndex; i++){
+        //从当前位置之后（包括当前位置）随机取一个值进行交换。
+        const j = i + Math.floor(Math.random() * (array.length - i));
+        //es6解构赋值
+        [array[i], array[j]] = [array[j], array[i]]
     }
-  ```
-  <img src="shuffle算法.jpg" />
+    return array
+  }
+```
 
-## 1.2 九宫格行坐标`colIndex`列坐标`rowIndex`和宫序号`boxIndex`宫内序号`cellIndex`的互相转换
-  1. 行列坐标转换成宫序号和宫内序号
-     - 宫坐标（Gx,Gy）。宫坐标的规律是，Gx是横坐标每3格＋1,Gy是纵坐标每3格＋1，所以要(col,row)转换成(Gx,Gy)就是把col和row分别/3取整，表示间隔了几次3格，得到的值就是（Gx,Gy）。
-   ((col/3),（row/3）)
-     - 宫序号boxIndex。我们把每个九宫格看成是一格，可以得出Gx每＋1就代表多1个九宫格，Gy每＋1就代表多3个九宫格。所以要计算宫序号，只要Gx＋Gy×3得到的值就是序号。
-   (col/3)＋（row/3）×3
-     - 宫内格坐标。每3×3=9格是一个九宫格，图中总共有9个九宫格，然后每个九宫格都有自己的坐标从(0,0)-(2,2)。简单来说就是每隔3格，单元格的坐标就要重新计算。也就是说行列坐标对3求余表示当前的坐标遇3归0后剩下的值就是单元格的坐标。
-   ((colIndex%3),(rowIndex%3))
-     - 宫内序号cellIndex。每个九宫格都是一个独立的数组，要把九宫格里面的坐标转换成序号也是类似的。横坐标＋1表示单元格序号＋1，纵坐标+1表示单元格的序号+3。
-   (colIndex%3)＋(rowIndex%3)×3
+<img src="shuffle算法.jpg" />
 
-  2. 宫序号和宫内序号转换成行列坐标
-     - 因为Gx=col/3,Gy=row/3；所以col=Gx×3，row=Gy×3；(Gx×3,Gy×3)只是这个宫的左上角的坐标。根据宫内序号cellIndex可以得到cellIndex%3是宫内横坐标，cellIndex/3是宫内纵坐标。把宫内序号cellIndex代入可得((Gx×3＋cellIndex%3),(Gy×3＋cellIndex/3))。接下来根据宫序号boxIndex可以得到boxIndex%3是横坐标Gx，boxIndex/3是纵坐标Gy。最终用宫序号和宫内序号表示坐标。((boxIndex%3×3＋cellIndex%3),(boxIndex/3×3＋cellIndex/3))
+## 九宫格行坐标`colIndex`列坐标`rowIndex`和宫序号`boxIndex`宫内序号`cellIndex`的互相转换
+
+- 行列坐标转换成宫序号和宫内序号
+  - 宫坐标（Gx,Gy）。宫坐标的规律是，Gx是横坐标每3格＋1,Gy是纵坐标每3格＋1，所以要(col,row)转换成(Gx,Gy)就是把col和row分别/3取整，表示间隔了几次3格，得到的值就是（Gx,Gy）。((col/3),（row/3）)
+  - 宫序号boxIndex。我们把每个九宫格看成是一格，可以得出Gx每＋1就代表多1个九宫格，Gy每＋1就代表多3个九宫格。所以要计算宫序号，只要Gx＋Gy×3得到的值就是序号。(col/3)＋（row/3）×3
+  - 宫内格坐标。每3×3=9格是一个九宫格，图中总共有9个九宫格，然后每个九宫格都有自己的坐标从(0,0)-(2,2)。简单来说就是每隔3格，单元格的坐标就要重新计算。也就是说行列坐标对3求余表示当前的坐标遇3归0后剩下的值就是单元格的坐标。((colIndex%3),(rowIndex%3))
+  - 宫内序号cellIndex。每个九宫格都是一个独立的数组，要把九宫格里面的坐标转换成序号也是类似的。横坐标＋1表示单元格序号＋1，纵坐标+1表示单元格的序号+3。(colIndex%3)＋(rowIndex%3)×3
+
+- 宫序号和宫内序号转换成行列坐标
+  - 因为Gx=col/3,Gy=row/3；所以col=Gx×3，row=Gy×3；(Gx×3,Gy×3)只是这个宫的左上角的坐标。根据宫内序号cellIndex可以得到cellIndex%3是宫内横坐标，cellIndex/3是宫内纵坐标。把宫内序号cellIndex代入可得((Gx×3＋cellIndex%3),(Gy×3＋cellIndex/3))。接下来根据宫序号boxIndex可以得到boxIndex%3是横坐标Gx，boxIndex/3是纵坐标Gy。最终用宫序号和宫内序号表示坐标。((boxIndex%3×3＋cellIndex%3),(boxIndex/3×3＋cellIndex/3))
 
 <img src="九宫格.png" />
 
 # Node.js
 ## __dirname和process.cwd()
 - `Node.js` 中，`__dirname` 总是指向被执行js文件的绝对路径。
+
 ```js
-console.info('process.cwd()是当前进程的工作目录，参照package.json所在的位置的。',process.cwd())
-console.info('__dirname是当前js文件所处的路径。',__dirname)
+  console.info('process.cwd()是当前进程的工作目录，参照package.json所在的位置的。',process.cwd())
+  console.info('__dirname是当前js文件所处的路径。',__dirname)
 ```
+
 ## path
 要使用`path`需要先`npm install path`，然后再在需要的文件里面引入`const path = require('path');`才可以使用。
 两种用法：
 1. 连接路径：path.join([path1][, path2][, ...])
 2. 路径解析：path.resolve([from ...], to)
 最大的区别：就是对`/`的解析，`join`只是拼上去，而`resolve`则是解析成根路径`/`
+
 ```javascript
 var path = require('path');
 path.join('/foo', 'bar', 'baz/asdf', 'quux', '..')
@@ -79,7 +85,6 @@ path.resolve('/foo/bar', '/tmp/file/')
 path.resolve('wwwroot', 'static_files/png/', '../gif/image.gif')
 // 当前的工作路径是 /home/itbilu/node，则输出结果为
 '/home/itbilu/node/wwwroot/static_files/gif/image.gif'
-
 const path = require('path');
 let myPath = path.join(__dirname,'/img/so');
 let myPath2 = path.join(__dirname,'./img/so');
@@ -103,7 +108,7 @@ console.log(myPath4);   //D:\myProgram\test\img\so
     一个提案只要能进入 Stage 2，就差不多肯定会包括在以后的正式标准里面。ECMAScript 当前的所有提案，可以在 TC39 的官方网站Github.com/tc39/ecma262查看。
 
 ## 在SwitchCase的case中如果没有{}
-    当词法声明 (let、const、function 和 class) 出现在 case或default 子句中。该词法声明的变量在整个 switch 语句块中是可见的，但是它只有在运行到它定义的 case 语句时，才会进行初始化操作。为了保证词法声明语句只在当前 case 语句中有效，需要用大括号`{}`将你子句包裹在块中。
+    当词法声明 (let、const、function 和 class) 出现在 case或default 子句中。该词法声明的变量在整个 switch 语句块中是可见的，但是它只有在运行到它定义的 case 语句时，才会进行初始化操作。为了保证词法声明语句只在当前 case 语句中有效，需要用大括号{}将你子句包裹在块中。
 
 # Babel
     Babel的配置文件是.babelrc，存放在项目的根目录下。使用 Babel 的第一步，就是配置这个文件。
@@ -138,6 +143,7 @@ console.log(myPath4);   //D:\myProgram\test\img\so
     }
 
     如果presets没有设置`stage-2`，因为这里面有些语法还在`stage-2`阶段还没有正式发布，所以如果没有加上这个配置就无法解析这种语法。
+
 <img src="presets没有设置stage-2.png" />
 
 ### presets打包优化
@@ -184,39 +190,46 @@ console.log(myPath4);   //D:\myProgram\test\img\so
     }
 
 ### plugins字段插件详解
+
 #### 配置transform-runtime
-    作用：支持generator。当项目启用generate的时候如果没有这个插件会报错regeneratorRuntime is not defined。
-    安装："babel-plugin-transform-runtime": "^6.23.0"
+- 作用：支持generator。当项目启用generate的时候如果没有这个插件会报错regeneratorRuntime is not defined。
+- 安装："babel-plugin-transform-runtime": "^6.23.0"
 
 #### 配置transform-decorators-legacy
-    作用：支持@语法
-    安装："babel-plugin-transform-decorators-legacy": "^1.3.5"
+- 作用：支持@语法
+- 安装："babel-plugin-transform-decorators-legacy": "^1.3.5"
 
 #### 配置add-module-exports
-    作用：支持import和export语法
-    安装："babel-plugin-add-module-exports": "^1.0.0"
+- 作用：支持import和export语法
+- 安装："babel-plugin-add-module-exports": "^1.0.0"
 
 #### 配置transform-class-properties
-    作用：有时候我们将 defaultProps, propTypes写在class中，而不是分开写，可以使用这个插件支持。
-    class App extends React.Component {
-      static propTypes = {
-        num: React.PropTypes.number.isRequired,
-        val: React.PropTypes.string.isRequired
-      }
-      static defaultProps = {
-        num: 1,
-        val: "hello React"
-      }
-    }
-    安装："babel-plugin-transform-class-properties": "^6.24.1"
+- 作用：有时候我们将 defaultProps, propTypes写在class中，而不是分开写，可以使用这个插件支持。
+
+```js
+class App extends React.Component {
+  static propTypes = {
+    num: React.PropTypes.number.isRequired,
+    val: React.PropTypes.string.isRequired
+  }
+  static defaultProps = {
+    num: 1,
+    val: "hello React"
+  }
+}
+```
+- 安装："babel-plugin-transform-class-properties": "^6.24.1"
 
 #### 配置 transform-es3-member-expression-literals和transform-es3-property-literals
-  作用：像下面这种代码
+作用：像下面这种代码
+
 ```js
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 module.exports = _main2.default;
 ```
+
 在 IE8 下会直接报”缺少标识符、字符串或数字”的错。我们得在对象的属性上加 '' 才可以。就像下面这样：
+
 ```js
 function _interopRequireDefault(obj) {
   return obj && obj.__esModule ? obj : { 'default': obj };
@@ -224,8 +237,7 @@ function _interopRequireDefault(obj) {
 ```
 至于原因，并不是 IE8 下对象的属性必须得加 '' 才行，而是 default 的问题，作为一个关键字，同样的问题还包括 catch。这两种情况，可以通过使用`transform-es3-property-literals`和`transform-es3-member-expression-literals`这两个插件搞定。总之，在平时写代码的时候避免使用关键字，或者保留字作为对象的属性值，尤其是在习惯不加引号的情况下。相关讨论：[Allow reserved words for properties](https://github.com/airbnb/javascript/issues/61)
 
-安装："babel-plugin-transform-es3-member-expression-literals": "^6.22.0"
-
+- 安装："babel-plugin-transform-es3-member-expression-literals": "^6.22.0"和
 "babel-plugin-transform-es3-property-literals": "^6.22.0"
 
 ## babel在webpack中出现的问题
@@ -233,6 +245,7 @@ function _interopRequireDefault(obj) {
 使用了被移除的babel5中的语法，是因为没有把node_modules排除掉。目录是相对package.json的路径。
 
 因为node_modules里面有一些包是用了Babel 5中的语法，但是在这个loader里面又是被移除了，所以就报错了，根本解决办法就是把`node_modules`exclude掉。
+
 ```js
 module: {
       rules: [
@@ -244,10 +257,12 @@ module: {
       ]
 }
 ```
+
 <img src="未exclude导致的babel报错.png" />
 
 # Eslint
 ## 需要引用的js包（package.json）
+
 ```json
 {
   "babel-eslint": "^10.0.1",
@@ -257,8 +272,9 @@ module: {
 }
 ```
 ## 配置文件（eslintrc.json）
-    1、要在配置文件中设置 parser 为 babel-eslint ，意思是用babel转换之后再给eslint验证，否则有些es6的语法可能eslint并无法识别。
-    2、babel-eslint，eslint，eslint-plugin-react主要用于eslintrc.json的配置。
+- 要在配置文件中设置 parser 为 babel-eslint ，意思是用babel转换之后再给eslint验证，否则有些es6的语法可能eslint并无法识别。
+- babel-eslint，eslint，eslint-plugin-react主要用于eslintrc.json的配置。
+
 ```json
 {
   "parser": "babel-eslint",
@@ -298,8 +314,10 @@ module: {
 }
 
 ```
+
 ## 配置到webpack中
 eslint-loader用于webpack的配置。
+
 ```js
 module: {
     rules: [
@@ -311,10 +329,11 @@ module: {
     ]
 }
 ```
+
 ## 增加钩子让用户在提交前都执行以下eslint。
 Git hooks made easy
-
 在package.json增加husky依赖，同时配置commit之前和push之前需要执行的命令，强制用户执行eslint检查。
+
 ```javascript
 {
   "husky": {
@@ -328,9 +347,11 @@ Git hooks made easy
   }
 }
 ```
+
 ## 推荐配置
 可以访问`https://cn.eslint.org/demo/`勾选需要的配置，然后下载到本地使用。
 0 = off, 1 = warn, 2 = error 
+
 ```json
 {
   "parserOptions": {
@@ -403,6 +424,7 @@ Git hooks made easy
 - css-loader要配合MiniCssExtractPlugin.loader会把css进行抽取独立文件。
 - css-loader要启用modules=true，在代码里面才能import styles from 'style.css'。同时设置localIdentName规则对css的名称设置唯一id，防止全名冲突。
 - 可以开启OptimizeCSSAssetsPlugin对css进行压缩。
+
 ```js
 {
   test: /\.(sc|c)ss$/,
@@ -421,12 +443,14 @@ Git hooks made easy
   ]
 }
 ```
+
 <img src="未开启modules.png" />
 <img src="开启modules.png" />
 
 ## IP访问
 在package.json的执行脚本中增加`--host 0.0.0.0`就可以通过ip访问了，缺点是刚开始启动的时候无法打开网页，需要等启动完成后输入地址重新访问。
 也可以通过js获取本机ip
+
 ```js
 devServer: {
   disableHostCheck: true,
@@ -445,22 +469,27 @@ devServer: {
   })()
 }
 ```
+
 <img src="获取ip.png" />
 
 ## file-loader与url-loader
+
 ### 区别
 - 相同点：都可以用来加载资源文件。
 - 不同点：url-loader可以设置小于指定大小的文件直接打包到js里面，减少请求次数。file-loader则是把文件加载到指定目录。
+
 ### 联系
 - 当有文件超过`url-loader`指定的文件大小后，不会被打包到js里面，但是它就变成需要`file-loader`加载否则会报错。
 - 把小图片打包到js里面减少请求次数各有利弊。优点：可以减少小图片的请求次数，降低网络IO的请求次数。缺点：图片会被转换成base64的格式和js一起打包进入会带出新的问题，就是这样会导致css变大，这样加载单个css可能需要的时长会更长。另外，base64的算法是把原来的数据每3位用4位替换，这样原来如果是1，就会变成4/3，相当于比原来大了1/3。
 - 因此是否需要使用url-loader把小图片打包到js文件需要权衡后再做决定。把小图片打包到js需要做的牺牲就是js文件会变大。
 - file-loader实现的是懒加载，只有在页面需要用到具体的元素才会加载，否则并不会加载。这样能提高整体的性能。
+
 ### 用法
 - file-loader的publicPath属性，用来指定访问的路径。
 - file-loader的outputPath属性，用来指定打包输出的路径和访问的路径。建议使用outputPath属性，因为这个属性同时指定了打包输入和访问的路径，而publicPath只指定了访问的路径，如果你实际打包的路径不是这个就访问不到了。
 - url-loader的limit属性，用来指定小于限定的字节(Byte)则打包到js文件里面，超过限定的字节(Byte)则需要file-loader加载。
 - 基本用法如下，小于8k的图片可以转成base64一起打入css，大于的则用file-loader加载。这样既可以减少图片请求数，又保证了css文件不会太大。
+
 ```js
 {
   test:/\.(jpg|png|svg|gif)/,
@@ -476,17 +505,20 @@ devServer: {
 ```
 
 # React
+
 ## React中对XSS如何进行XSS攻击和防范
 - prerender / SSR 的 hydrate 过程会生成 html ，需要小心测试其中是否有 XSS 漏洞。
 - dangerouslySetInnerHTML、onload=字符串、href=字符串 等，都有可能造成 XSS 漏洞。
 - 所有的用户输入都需要经过HTML实体编码，这里React已经帮我们做了很多，它会在运行时动态创建DOM节点然后填入文本内容（你也可以强制设置HTML内容，不过这样比较危险）。
 - 当你打算序列化某些状态并且传给客户端的时候，你同样需要进行HTML实体编码。
 - Yahoo的工程师已经提供了一个Serialize JavaScript模块帮我们轻松地进行JSON转码与过滤，我们可以直接使用npm install --save serialize-javascript导入该模块，然后使用serialize方法替代内置的JSON.stringify方法。
+
 ### XSS 漏洞的发生和修复
 - 通常页面中包含的用户输入内容都在固定的容器或者属性内，以文本的形式展示。
 - 攻击者利用这些页面的用户输入片段，拼接特殊格式的字符串，突破原有位置的限制，形成了代码片段。
 - 攻击者通过在目标网站上注入脚本，使之在用户的浏览器上运行，从而引发潜在风险。
 - 通过 HTML 转义，可以防止 XSS 攻击。
+
 ```html
 <input type="text" value="<%= getParameter("keyword") %>">
 <button>搜索</button>
@@ -494,7 +526,9 @@ devServer: {
   您搜索的关键词是：<%= getParameter("keyword") %>
 </div>
 ```
+
 当浏览器请求 `http://xxx/search?keyword="><script>alert('XSS');</script>`时，服务端会解析出请求参数 keyword，得到 `"><script>alert('XSS');</script>`，拼接到 HTML 中返回给浏览器。形成了如下的 HTML：
+
 ```html
 <input type="text" value=""><script>alert('XSS');</script>">
 <button>搜索</button>
@@ -502,9 +536,11 @@ devServer: {
   您搜索的关键词是："><script>alert('XSS');</script>
 </div>
 ```
+
 浏览器无法分辨出 `<script>alert('XSS');</script>` 是恶意代码，因而将其执行。这里不仅仅 div 的内容被注入了，而且 input 的 value 属性也被注入， alert 会弹出两次。
 
 解决办法
+
 ```html
 <input type="text" value="<%= escapeHTML(getParameter("keyword")) %>">
 <button>搜索</button>
@@ -512,7 +548,9 @@ devServer: {
   您搜索的关键词是：<%= escapeHTML(getParameter("keyword")) %>
 </div>
 ```
+
 escapeHTML() 按照如下规则进行转义：|字符|转义后的字符| |-|-| |&|&amp;| |<|&lt;| |>|&gt;| |"|&quot;| |'|&#x27;| |/|&#x2F;|经过了转义函数的处理后，最终浏览器接收到的响应为
+
 ```html
 <input type="text" value="&quot;&gt;&lt;script&gt;alert(&#x27;XSS&#x27;);&lt;&#x2F;script&gt;">
 <button>搜索</button>
@@ -520,18 +558,23 @@ escapeHTML() 按照如下规则进行转义：|字符|转义后的字符| |-|-| 
   您搜索的关键词是：&quot;&gt;&lt;script&gt;alert(&#x27;XSS&#x27;);&lt;&#x2F;script&gt;
 </div>
 ```
+
 恶意代码都被转义，不再被浏览器执行，而且搜索词能够完美的在页面显示出来。
 
 ### 注意特殊的 HTML 属性、JavaScript API
 - 做了 HTML 转义，并不等于高枕无忧。
 - 对于链接跳转，如 <a href="xxx" 或 location.href="xxx"，要检验其内容，禁止以 javascript: 开头的链接，和其他非法的 scheme。
+
 ```html
 <a href="<%= escapeHTML(getParameter("redirect_to")) %>">跳转...</a>
 ```
+
 这段代码，当攻击 URL 为 http://xxx/?redirect_to=javascript:alert('XSS')，服务端响应就成了：
+
 ```html
 <a href="javascript:alert(&#x27;XSS&#x27;)">跳转...</a>
 ```
+
 ```js
 // 根据项目情况进行过滤，禁止掉 "javascript:" 链接、非法 scheme 等
 allowSchemes = ["http", "https"];
@@ -546,6 +589,7 @@ if (valid) {
   </a>
 }
 ```
+
 ### 根据上下文采用不同的转义规则
 - HTML 转义是非常复杂的，在不同的情况下要采用不同的转义规则。如果采用了错误的转义规则，很有可能会埋下 XSS 隐患。
 - 应当尽量避免自己写转义库，而应当采用成熟的、业界通用的转义库。
@@ -564,6 +608,7 @@ if (valid) {
 - 未装propTypes报错Cannot read property 'array' of undefined
 - react15之后prop-types被剥离开来，而react-router里面的很多写法还是react.proptypes这样肯定报错。所以有两种方案，一种是把react降到15之前（不包括15），另外一种就是把react-router升级到3.x以上版本。
 - 为什么不直接升级到4.x因为我试用了一下发现是服务端渲染，而且一大堆配套的都要升级，因此升级到3.x是最明智的选择。
+
 <img src="未装propTypes报错1.png" />
 <img src="未装propTypes报错2.png" />
 
@@ -573,10 +618,13 @@ if (valid) {
 简单来说，当我们dispatch一个action后，先发到reducer，然后saga同时也收到了一份，这时候saga可以put出新的action给reducer接收。
 
 ## react性能优化
+
 ### 多次render的优化。合理使用container和dump
 有些组件的数据都是从父组件一直传递到子组件，这样当父组件渲染的时候，子组件也会跟着渲染。所以比如list，dialog等类型的组件我都是让在redux里面，然后container进行connect。只有这些变化的时候才会重新render，否则父组件重新render也不会让子组件重新render因为，子组件的props都没有变化。
+
 ### 多次render的优化。定制shouldComponentUpdate函数
 shouldComponentUpdate(nextProps,nextState) false不render，true才render。如果啥也不反悔默认返回true。在最新的react中，react给我们提供了React.PureComponent，官方也在早期提供了名为react-addons-pure-render-mixin插件来重新实现shouldComponentUpdate生命周期方法。
+
 ### 多次render的优化。immutable与with-immutable-props-to-js
 建议使用seamless-immutable。javascript中的对象一般都是可变的，因为使用了引用赋值，新的对象简单的引用了原始对象，改变新对象将影响到原始对象。这样做非常的昂贵，对cpu和内存会造成浪费。
 
@@ -593,6 +641,7 @@ onClick={this.handleClick}构造函数每一次渲染的时候只会执行一遍
 onClick={this.handleClick.bind(this)}在每次render()的时候都会重新执行一遍函数。
 
 onClick={()=>{this.handleClick()}}每一次render()的时候，都会生成一个新的箭头函数，即使两个箭头函数的内容是一样的。
+
 ```javascript
 // A
 <ul>
@@ -606,9 +655,11 @@ onClick={()=>{this.handleClick()}}每一次render()的时候，都会生成一�
   <TodoItem text="Second" complete={false} />
 </ul>
 ```
+
 ### redux优化
 
 # Immutable
+
 ##  基本规范state.set('key',value)
 - 如果value是基础类型，比如number，string等，建议可以直接这样set进去。
 - 如果value是对象类型，比如map，list等，可以fromJS(value)再设置进去。
@@ -631,6 +682,7 @@ onClick={()=>{this.handleClick()}}每一次render()的时候，都会生成一�
 ## 控制反转
 - 控制反转就是把原来自己控制的权限转交给外部控制的过程叫做控制反转，也叫控制转移。
 - 依赖注入就是把控制权转交出去，依赖查找就是外部容器控制这个对象。
+
 ```javascript
 class IoC {
     constructor() {
@@ -655,6 +707,7 @@ class IoC {
 - 面向切面编程其实就是代理模式
 - 表单引擎在预编译的时候把this._onChange与this._aop绑定在一起，在onChange运行时的时候才真正去出发this._aop中的方法。
 - 面向切面编程，通过预编译方式和运行期动态代理实现程序功能的统一维护的一种技术。每个组件把自己转交给IoC容器，然后继承BaseComponent在切面中编写代码。实例化IoC容器，并且把组件注入到容器中。绑定aop切面，让子类可以方便的使用aop切面。
+
 ```javascript
 export class BaseComponent extends Component {
     static displayName = 'BaseComponent'
@@ -682,8 +735,67 @@ export class BaseComponent extends Component {
 - 代理模式。就类似AOP切面编程。
 - 中介者模式。通过dependencies把状态传出去。
 - 观察者模式。
+- 模块模式。
+
+```js
+var Counter = (function() {
+  var privateCounter = 0;
+  function changeBy(val) {
+    privateCounter += val;
+  }
+  return {
+    increment: function() {
+      changeBy(1);
+    },
+    decrement: function() {
+      changeBy(-1);
+    },
+    value: function() {
+      return privateCounter;
+    }
+  }   
+})();
+
+console.log(Counter.value()); /* logs 0 */
+Counter.increment();
+Counter.increment();
+console.log(Counter.value()); /* logs 2 */
+Counter.decrement();
+console.log(Counter.value()); /* logs 1 */
+```
+
+```js
+var makeCounter = function() {
+  var privateCounter = 0;
+  function changeBy(val) {
+    privateCounter += val;
+  }
+  return {
+    increment: function() {
+      changeBy(1);
+    },
+    decrement: function() {
+      changeBy(-1);
+    },
+    value: function() {
+      return privateCounter;
+    }
+  }  
+};
+
+var Counter1 = makeCounter();
+var Counter2 = makeCounter();
+console.log(Counter1.value()); /* logs 0 */
+Counter1.increment();
+Counter1.increment();
+console.log(Counter1.value()); /* logs 2 */
+Counter1.decrement();
+console.log(Counter1.value()); /* logs 1 */
+console.log(Counter2.value()); /* logs 0 */
+```
 
 ## 设计原则
+
 ### 简单，单一，尽量少互相依赖，可扩展不可修改，尽量组合。
 - 单一职责原则（Single Responsibility Principle）
   - 优点：类的复杂性降低，可读性提高。一个类应该只有一个发生变化的原因。类、函数和接口都要要遵循单一职责原则。遵守单一职责原则，将不同的职责封装到不同的类或模块中。
@@ -711,6 +823,377 @@ export class BaseComponent extends Component {
 - 组合/聚合复用原则（Composite/Aggregate Reuse Principle CARP）尽量使用合成/聚合达到复用，尽量少用继承。
   - 特点： 一个类中有另一个类的对象。对比继承子类会被父类污染。但是如果是非常明确的一定必须要有的，继承依然可以使用。组合比较灵活。
 
+# HTTPS
+
+## 基本流程
+1. 客户端，发起HTTPS请求，请求服务端返回一个，非对称加密的公钥。
+2. 服务端，收到HTTPS请求，用私钥生成一个公钥，把公钥返回给客户端。
+3. 客户端，收到公钥，用公钥加密数据，把加密后的数据发给服务端。
+4. 服务端，收到加密的数据，用私钥解密，获得原文内容。
+
+## 劫持
+在上述基本流程中，如果客户端和服务端交互的过程中被拦截。就有可能出现问题。
+1. 客户端，发起HTTPS请求，请求服务端返回一个，非对称加密的公钥。
+2. 服务端，收到HTTPS请求，用私钥生成一个公钥，把公钥返回给客户端。
+3. 第三方收到公钥，在自己这边用自己的私钥生成一个公钥，然后传递给客户端。
+4. 客户端，收到公钥，用公钥加密数据，把加密后的数据发给服务端。
+5. 第三方进行拦截，用自己的私钥解密客户端发送的数据，获得原文后用真正服务端的公钥进行加密，然后返回给服务端。
+6. 服务端，收到加密的数据，用私钥解密，获得原文内容。
+
+## 数字证书
+证书中包含了加密过的A公钥和权威机构的信息，所以服务器只需要给客户端下发数字证书即可。权威机构的公钥不需要传输，因为权威机构会和主流的浏览器或操作系统合作，将他们的公钥内置在浏览器或操作系统环境中。
+
+服务器给客户端下发数字证书时证书被中间人劫持了，中间人将服务器的证书替换成自己的证书下发给客户端，客户端收到之后能够通过权威机构的公钥解密证书内容（因为中间人的证书也是权威机构私钥加密的），从而获取公钥，但是，这里的公钥并不是服务器原本的A公钥，而是中间人自己证书中的B公钥。
+
+## 安全传输证书
+保证客户端收到的证书是服务器下发的证书，没有被中间人篡改过。
+检查证书中的域名和当前访问的域名是否一致
+
+# async/await 和 promise
+async/await 在底层转换成了 promise 和 then 回调函数。也就是说，这是 promise 的语法糖。每次我们使用 await, 解释器都创建一个 promise 对象，然后把剩下的 async 函数中的操作放到 then 回调函数中。async/await 的实现，离不开 Promise。从字面意思来理解，async 是“异步”的简写，而 await 是 async wait 的简写可以认为是等待异步方法执行完成。
+
+async/await不要乱用，否则会增加没必要的时间浪费。比如原来可以并行执行的两个方法，使用了await就导致时间边长了。
+
+```js
+// 比如原来b和d是可以并发执行的
+a(() => {
+  b();
+});
+c(() => {
+  d();
+});
+// 但是这样await之后
+await a();
+await b();
+await c();
+await d();
+// 就变成了顺序执行，增加了时间
+a(() => {
+  b(() => {
+    c(() => {
+      d();
+    });
+  });
+});
+```
+
+# 数据库同步，升级indexDB
+参考svn的同步机制，是否已同步syncFlag，true已同步，false未同步。version比较。
+- syncFlag false
+  - 客户端版本大于服务端版本，push数据
+  - 客户端版本等于服务端版本，数据冲突
+  - 客户端版本小于服务端版本，pull数据
+- syncFlag true
+  - 正常情况下，客户端版本不会大于服务端版本。
+  - 客户端版本等于服务端版本，不操作。
+  - 客户端版本小于服务端版本，pull数据。
+  
+# Event Loop
+
+## 前置知识
+
+### 堆（Heap）
+堆是一种数据结构，是利用完全二叉树维护的一组数据，堆分为两种，一种为最大堆，一种为最小堆，将根节点最大的堆叫做最大堆或大根堆，根节点最小的堆叫做最小堆或小根堆。
+堆是线性数据结构，相当于一维数组，有唯一后继。
+
+### 栈（Stack）
+栈在计算机科学中是限定仅在表尾进行插入或删除操作的线性表。 栈是一种数据结构，它按照后进先出的原则存储数据，先进入的数据被压入栈底，最后的数据在栈顶，需要读数据的时候从栈顶开始弹出数据。
+栈是只能在某一端插入和删除的特殊线性表。
+
+### 队列（Queue）
+特殊之处在于它只允许在表的前端（front）进行删除操作，而在表的后端（rear）进行插入操作，和栈一样，队列是一种操作受限制的线性表。
+进行插入操作的端称为队尾，进行删除操作的端称为队头。
+队列中没有元素时，称为空队列。
+队列的数据元素又称为队列元素。在队列中插入一个队列元素称为入队，从队列中删除一个队列元素称为出队。因为队列只允许在一端插入，在另一端删除，所以只有最早进入队列的元素才能最先从队列中删除，故队列又称为先进先出（FIFO—first in first out）
+
+## 任务队列
+在JavaScript中，任务被分为两种，一种宏任务（MacroTask）也叫Task，一种叫微任务（MicroTask）。
+
+### MacroTask（宏任务）
+script全部代码、setTimeout、setInterval、I/O、UI Rendering。
+
+### MicroTask（微任务）
+Promise、process.nextTick (Node独有)、Object.observe、MutationObserver
+
+## 执行过程
+执行栈每次扫描js代码，只剥离一层，然后优先执行同步的代码，异步的代码分别放入宏队列和微队列。
+
+在执行微队列microtask queue中任务的时候，如果又产生了microtask，那么会继续添加到队列的末尾，也会在这个周期执行，直到microtask queue为空停止。
+
+当然如果你在microtask中不断的产生microtask，那么其他宏任务macrotask就无法执行了，但是这个操作也不是无限的，拿NodeJS中的微任务process.nextTick()来说，它的上限是1000个。
+
+```js
+console.log(1);
+setTimeout(() => {
+  console.log(2);
+  Promise.resolve().then(() => {
+    console.log(3)
+  });
+});
+new Promise((resolve, reject) => {
+  console.log(4)
+  resolve(5)
+}).then((data) => {
+  console.log(data);
+})
+setTimeout(() => {
+  console.log(6);
+})
+console.log(7);
+```
+### 开始执行
+- step1
+    mainStack=[console.log(1)]
+    macroQueue=[]
+    microQueue=[]
+    打印结果
+    1
+
+- step2
+    mainStack=[setTimeout]
+    macroQueue=[callback1]
+    microQueue=[]
+    打印结果
+    1
+
+- step3
+    mainStack=[promise]
+    macroQueue=[callback1]
+    microQueue=[callback2]
+    打印结果
+    1
+    4
+
+- step4
+    mainStack=[setTimeout]
+    macroQueue=[callback1,callback3]
+    microQueue=[callback2]
+    打印结果
+    1
+    4
+
+- step5
+    mainStack=[console]
+    macroQueue=[callback1,callback3]
+    microQueue=[callback2]
+    打印结果
+    1
+    4
+    7
+
+### 全局Script代码执行完了，进入下一个步骤，从microtask queue中依次取出任务执行，直到microtask queue队列为空。
+
+- step6
+    mainStack=[callback2]
+    macroQueue=[callback1,callback3]
+    microQueue=[]
+    打印结果
+    1
+    4
+    7
+    5
+
+- step7（这一步执行callback1的时候又遇到了另一个Promise，Promise异步执行完后在microtask queue中又注册了一个callback4回调函数）
+    mainStack=[callback1]
+    macroQueue=[callback3]
+    microQueue=[]
+    打印结果
+    1
+    4
+    7
+    5
+    2
+
+- step8
+    mainStack=[promise]
+    macroQueue=[callback3]
+    microQueue=[callback4]
+    打印结果
+    1
+    4
+    7
+    5
+    2
+
+- step9
+    mainStack=[callback4]
+    macroQueue=[callback3]
+    microQueue=[]
+    打印结果
+    1
+    4
+    7
+    5
+    2
+    3
+
+- step10
+    mainStack=[callback3]
+    macroQueue=[]
+    microQueue=[]
+    打印结果
+    1
+    4
+    7
+    5
+    2
+    3
+    6
+
+```js
+console.log(1);
+setTimeout(() => {
+  console.log(2);
+  Promise.resolve().then(() => {
+    console.log(3)
+  });
+});
+new Promise((resolve, reject) => {
+  console.log(4)
+  resolve(5)
+}).then((data) => {
+  console.log(data);
+  Promise.resolve().then(() => {
+    console.log(6)
+  }).then(() => {
+    console.log(7)
+    setTimeout(() => {
+      console.log(8)
+    }, 0);
+  });
+})
+setTimeout(() => {
+  console.log(9);
+})
+console.log(10);
+```
+执行结果
+1
+4
+10
+5
+6
+7
+2
+3
+9
+8
+
+## 总结
+- 简单来说，主要从执行栈、宏任务队列、微任务队列三个维度去描述。
+- setTimeout等是宏任务，promise等是微任务。
+- 执行栈，顺序执行js每一行代码，遇到异步代码则插入到任务队列。
+- 优先级，同步的普通代码>微队列>宏队列。执行顺序按照优先级从高到低执行，每一级执行完了才能执行下一级。
+- 微任务或者宏任务执行过程如果还有产生新的任务，则继续插入到任务队列后面。
+
+# js三座大山
+
+## 原型链
+
+### 继承和重写
+
+```js
+// 让我们从一个自身拥有属性a和b的函数里创建一个对象o：
+let f = function () {
+   this.a = 1;
+   this.b = 2;
+}
+/* 这么写也一样
+function f() {
+  this.a = 1;
+  this.b = 2;
+}
+*/
+let o = new f(); // {a: 1, b: 2}
+
+// 在f函数的原型上定义属性
+f.prototype.b = 3;
+f.prototype.c = 4;
+
+// 不要在 f 函数的原型上直接定义 f.prototype = {b:3,c:4};这样会直接打破原型链
+// o.[[Prototype]] 有属性 b 和 c
+//  (其实就是 o.__proto__ 或者 o.constructor.prototype)
+// o.[[Prototype]].[[Prototype]] 是 Object.prototype.
+// 最后o.[[Prototype]].[[Prototype]].[[Prototype]]是null
+// 这就是原型链的末尾，即 null，
+// 根据定义，null 就是没有 [[Prototype]]。
+
+// 综上，整个原型链如下: 
+
+// {a:1, b:2} ---> {b:3, c:4} ---> Object.prototype---> null
+
+console.log(o.a); // 1
+// a是o的自身属性吗？是的，该属性的值为 1
+
+console.log(o.b); // 2
+// b是o的自身属性吗？是的，该属性的值为 2
+// 原型上也有一个'b'属性，但是它不会被访问到。
+// 这种情况被称为"属性遮蔽 (property shadowing)"
+
+console.log(o.c); // 4
+// c是o的自身属性吗？不是，那看看它的原型上有没有
+// c是o.[[Prototype]]的属性吗？是的，该属性的值为 4
+
+console.log(o.d); // undefined
+// d 是 o 的自身属性吗？不是，那看看它的原型上有没有
+// d 是 o.[[Prototype]] 的属性吗？不是，那看看它的原型上有没有
+// o.[[Prototype]].[[Prototype]] 为 null，停止搜索
+// 找不到 d 属性，返回 undefined
+```
+
+### this指向
+```js
+var o = {
+  a: 2,
+  m: function(){
+    return this.a + 1;
+  }
+};
+console.log(o.m()); // 3
+// 当调用 o.m 时，'this' 指向了 o.
+var p = Object.create(o);
+// p是一个继承自 o 的对象
+p.a = 4; // 创建 p 的自身属性 'a'
+console.log(p.m()); // 5
+// 调用 p.m 时，'this' 指向了 p
+// 又因为 p 继承了 o 的 m 函数
+// 所以，此时的 'this.a' 即 p.a，就是 p 的自身属性 'a'
+```
+
+### 原型链性能
+在原型链上查找属性比较耗时，对性能有副作用，这在性能要求苛刻的情况下很重要。另外，试图访问不存在的属性时会遍历整个原型链。
+
+### 错误实践：扩展原生对象的原型
+经常使用的一个错误实践是扩展 Object.prototype 或其他内置原型。
+
+这种技术被称为猴子补丁并且会破坏封装。尽管一些流行的框架（如 Prototype.js）在使用该技术，但仍然没有足够好的理由使用附加的非标准方法来混入内置原型。
+
+扩展内置原型的唯一理由是支持 JavaScript 引擎的新特性，如 Array.forEach。
+
+## 闭包
+闭包是函数和声明该函数的词法环境的组合。换句话说说就是，函数和声明该函数的词法环境。
+- 词法作用域。词法作用域中`有效范围`，是变量在代码中`声明的位置`所决定的。嵌套的函数可以访问在其外部声明的变量。
+- 闭包。JavaScript中的函数会形成闭包。 闭包是由`函数`以及`创建该函数的词法环境`组合而成。这个环境包含了这个闭包创建时所能访问的`所有局部变量`。
+
+它们共享相同的函数定义，但是保存了不同的词法环境。
+```js
+function makeAdder(x) {
+  return function(y) {
+    return x + y;
+  };
+}
+var add5 = makeAdder(5);
+var add10 = makeAdder(10);
+console.log(add5(2));  // 7
+console.log(add10(2)); // 12
+```
+
+- 词法环境。let块作用域，var完整作用域
+
+## 同步异步
+
+# web workers
+
 # 其他
 ## 状态码
     n200 OK，当GET请求成功完成，DELETE或者PATCH请求同步完成。
@@ -719,13 +1202,13 @@ export class BaseComponent extends Component {
     n204 No Content，Response中包含一些Header和一个状态行， 但不包括实体的主题内容（没有response body）
     n304 Not Modified，客户的缓存资源是最新的， 要客户端使用缓存
     n400 Bad Request
-    require_argument 缺少参数
-    invalid_argument 无效参数
+      require_argument 缺少参数
+      invalid_argument 无效参数
     n401 Unauthorized: 请求失败，因为用户没有进行认证
-    auth_token_expired 授权已过期
-    auth_invalid_token 无效的授权(如token不存在、需要mac签名、mac签名无效、nonce无效、重复提交等)
+      auth_token_expired 授权已过期
+      auth_invalid_token 无效的授权(如token不存在、需要mac签名、mac签名无效、nonce无效、重复提交等)
     n403 Forbidden: 请求失败，因为用户被认定没有访问特定资源的权限
-    auth_denied 授权受限（无权限或IP地址受限等）
+      auth_denied 授权受限（无权限或IP地址受限等）
     n405 Method Not Allowed：不支持该 Request 的方法
     n406 Not Acceptable：请求的资源的内容特性无法满足请求头中的条件，因而无法生成响应实体。
     n415 Unsupported Media Type: 对于当前请求的方法和所请求的资源，请求中提交的实体并不是服务器中所支持的格式，因此请求被拒绝。
@@ -736,3 +1219,157 @@ export class BaseComponent extends Component {
     n503 Service Unavailable：服务器目前无法为请求提供服务，但过一段时间就可以恢复服务
 
 
+# 技术栈
+
+## 基础部分
+### 页面布局
+- 几种布局方式。float，position，flex，table，grid
+
+### css盒子模型
+- 标准盒子模型box-sizing:content-box
+- IE盒子模型box-sizing:border-box
+
+### DOM事件
+- 事件捕获从上往下
+- 事件冒泡从下往上
+
+### 类型转换
+- string , number , boolean , undefined , null , symbol
+- 变量提升。js编译的时候把变量和函数提升到顶部。
+
+### HTTP协议类
+- HTTP1.0/HTTP1.1
+  - HTTP协议的主要特点。简单：快速uri唯一；灵活：可以完成不同数据类型的传输；无连接：连接一次就断掉，不会保持链接；无状态：服务端不保存客户端请求的状态。
+  - HTTP报文的组成部分。请求报文：请求行（http方法，页面地址，协议，版本1.1），请求头（key value值），空行（分隔请求头和请求体），请求体；响应报文：状态行，响应头，空行，响应体。
+  - HTTP方法。GET获取资源，POST传输资源，PUT更新资源，DELETE删除资源，HEAD获得报文首部，OPTION预请求一次能成功才接着往下。
+  - POST和GET的区别。GET回退无害，POST会再次请求。GET请求会被浏览器主动缓存POST不行。GET请求参数会被完整的保留在浏览器历史里面POST不会，预防CSRF可以把GET改成POST。GET长度有限制2kb不同浏览器不一样。GET比较不安全参数直接放在url里面，POST放在body里面。
+  - HTTP状态码。1xx指示信息，2xx成功，3xxurl已被重定向、缓存，4xx客户端错误参数错误、授权过期、不允许访问、不支持方法，5xx服务端错误内部错误、无效响应。
+  - 什么是持久连接。1.1支持1.0不支持keep-alive模式，持续有效，避免重新建立连接。
+  - 什么是管线化。在持久连接的前提request1，request2，request3一并发送，然后服务端返回response1，response2，response3
+- HTTP2.0
+  - 特点是：在不改动HTTP语义、方法、状态码、URI及首部字段的情况下，大幅度提高了web性能。
+  - 二进制传输：在应用层（HTTP2.0）和传输层（TCP or UDP）之间增加一个二进制分帧层。首部信息会被封装到Headers帧，而Request Body则封装到Data帧
+  - 多路复用：在一个TCP连接中存在多个流，即可以同时发送多个请求。在客户端，这些帧乱序发送，到对端后再根据每个帧首部的流标识符重新组装。通过该技术，可以避免HTTP旧版本的队头阻塞问题，极大提高传输性能。我们原来针对这种场景做的优化是用雪碧图，这样图片只要加载一次，但是用多路复用则是根本上解决问题，直接一次发送多个请求，返回一次返回多个请求。
+  - Header压缩：HTTP1的Header信息没有压缩每次都需要几百~几千字节。HTTP2用HPACK压缩算法，减小header的大小，记录header并维护索引表，下次再传输只要找到对应的索引就可以，不用重复传递太多的额外信息。
+  - 服务端push。
+  - 更安全。使用了tls的拓展ALPN做为协议升级，禁用不安全的算法。
+  
+
+### 原型链
+- 创建对象有几种方法。
+```js
+// 第一种
+var o1 = {name:'o1'}
+var o11 = new Object({name:'o1'})
+// 第二种
+var M = function (){this.name='o2'}
+var o2 = new M()
+// 第三种
+var P={name:'o3'}
+var o3 = Object.create(P)
+```
+- 构造函数`M`、原型对象`M.prototype`、实例`new M()`、原型链`__proto__`
+
+- instanceof的原理。判断`实例对象`的`__proto__`是不是`原型对象`
+- new运算符
+
+### 面向对象
+- 类与实例
+  - 类的声明
+  - 生成实例
+- 类与继承
+  - 如何实现继承
+  - 继承的几种方式。
+    - call(this)或者apply(this)。缺点是只继承部分属性，如果父类有属性变化，子类并不会自动继承下来。
+    - 把原型对象指向父类的实例。
+      Child.prototype = new Parent()。parentName属性在子类找不到就去__proto__去找，而__proto__指向了prototype，所以就找到了父类的parentName。
+      缺点是c1=new child();c2=new child()。修改c1和c2的属性会指向同一个对象。这是因为prototype共用了一个对象。这种方法要特别注意prototype不要指向同一个对象。
+    - 组合继承。object.create()
+### 通信类
+- 什么是同源策略及限制。协议，域名，端口要一致。不能操作cookie，localstorage，indexDB。DOM无法获得。AJAX请求不能发送跨域。
+- 前后端如何通信。ajax，WebSocket不限制同源策略，CORS支持跨域和同源
+- 如何创建ajax。XMLHttpRequest，ActiveXObject，构造data到url或者body里面，对返回的状态码处理。
+- 跨域通信的几种方式。
+  - JSONP。我在客户端定义了cb1函数，发送jsonp请求返回相应的数据给cb1，执行cb1。
+  - Hash。window.location.onHashChange()，会获得所有的整个url。
+  - PostMessage。A发送postMesage('data',url)，B接收window.addEventListener('message',function)
+  - WebSocket。new WebSocket(url)。emit提交、onopen、onmessage监听、onclose，客户端和服务端通过emit和onmessage实现通讯。
+  - CORS。fetch后.then.catch
+### 安全类
+- XSS
+  - 基本概念。跨站脚本攻击。
+  - 原理。不需要登录认证，在提交区注入脚本，在合法的页面注入js。
+  - 防范措施。过滤特殊字段，转义特殊字符。
+- CSRF
+  - 基本概念。跨站请求伪造
+  - 原理。登录A网站保存了cookie，访问B网站引诱用户点击发起了请求A网站的接口。
+  - 防范措施。token验证（服务器下发的token，自动请求的接口不会带token，而且token一般没办法伪造）、referer验证（验证来源是不是A网站）、隐藏令牌（放在head头中）
+
+### 算法类
+- 快速排序
+- 选择排序
+- 插入排序
+
+## 高级部分
+渲染机制，JS运行机制，页面性能，错误监控
+### 渲染机制
+- 
+
+### js运行机制
+- 
+
+### 页面性能
+- 资源压缩合并，减少HTTP请求
+- 非核心代码异步加载->异步加载的方式->异步加载的区别
+  - 动态脚本加载
+  - defer。Html解析之后才执行，按顺序执行。
+  - async。加载js后立即执行，不按顺序执行。
+- 利用浏览器缓存->缓存的分类->缓存的原理
+  - 强缓存。在有效时间内直接从缓存拿出。
+    - Header Expire：Thr，21 Jan 2017是绝对时间，服务器时间。 Cache-Control：max-age=3600相对时间，两个都有以这个为准。
+  - 协商缓存。把最后修改时间传递给服务器，确认后是否需要从缓存拿出。Etag If-None-Match If-Modified-Since
+    - Last-Modified:wed,26 jan 2017
+- 使用CDN
+- 预解析DNS
+
+### 错误监控
+- 即时运行错误
+  - try catch
+  - window.onerror
+- 资源加载错误。不会冒泡。
+  - object.onerror
+  - performance.getEntries()，获取所有已加载的资源。
+  - Error事件捕获，window.addEventLinster('error',()=>{console.log(1)},true)// ture捕获，false冒泡。
+- 上报方式
+  - ajax
+  - (new Image()).src='xxxx'。可以允许跨域。
+- allow-origin
+
+### mvvm框架
+- MVC：model，view，controller。controller控制model如何在view显示。model和view对controller的数据流向都是单向的，从controller到model和view。
+- MVVM，model，view，ViewModel。ViewModel双向View，model通过修改viewModel
+- 双向绑定
+  - 正向。通过模板把数据放到模板中freemarker。
+  - 反向。view的改变反应到data中。
+  - 绑定。自动处理。Object.defineProperty。
+- 设计模式
+  - 
+- 生命周期
+  - 为什么说componentWillMount、componentWillReceive、componentWillUpdate不安全
+    - 在componentWillMount请求数据并不能保证一定能在render之前就把数据返回回来。两者依然是异步的。
+    - componentWillReceive
+    - componentWillUpdate
+  - 引入的getDerivedStateFromProps、getSnapshotBeforeUpdate有什么作用
+    - 
+
+<img src="lifecycle.png" />
+<img src="lifecycle1.png" />
+<img src="lifecycle2.png" />
+
+- 源码分析
+  - 
+
+# React源码
+- extends。继承了ReactComponent
+- component的render。render其实就是调用React.createElement方法。该方法返回一个ReactElement对象，即组件对象。
+- ReactDOM.render(component,mountNode).
