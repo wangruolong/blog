@@ -57,8 +57,8 @@ tags:
 
 # Node.js
 ## __dirname和process.cwd()
-- `Node.js` 中，`__dirname` 总是指向被执行js文件的绝对路径。
-
+`__dirname`是当前js文件所处的路径。
+`process.cwd()`是当前进程的工作目录，参照package.json所在的位置的。
 ```js
   console.info('process.cwd()是当前进程的工作目录，参照package.json所在的位置的。',process.cwd())
   console.info('__dirname是当前js文件所处的路径。',__dirname)
@@ -73,28 +73,15 @@ tags:
 
 ```javascript
 var path = require('path');
-path.join('/foo', 'bar', 'baz/asdf', 'quux', '..')
-// 连接后
-'/foo/bar/baz/asdf'
-path.resolve('/foo/bar', './baz')
-// 输出结果为
-'/foo/bar/baz'
-path.resolve('/foo/bar', '/tmp/file/')
-// 输出结果为
-'/tmp/file'
-path.resolve('wwwroot', 'static_files/png/', '../gif/image.gif')
-// 当前的工作路径是 /home/itbilu/node，则输出结果为
-'/home/itbilu/node/wwwroot/static_files/gif/image.gif'
-const path = require('path');
-let myPath = path.join(__dirname,'/img/so');
-let myPath2 = path.join(__dirname,'./img/so');
-let myPath3 = path.resolve(__dirname,'/img/so');
-let myPath4 = path.resolve(__dirname,'./img/so');
-console.log(__dirname); //D:\myProgram\test
-console.log(myPath);    //D:\myProgram\test\img\so
-console.log(myPath2);   //D:\myProgram\test\img\so
-console.log(myPath3);   //D:\img\so
-console.log(myPath4);   //D:\myProgram\test\img\so
+path.join('/foo', 'bar', 'baz/asdf', 'quux', '..')// 连接后'/foo/bar/baz/asdf'
+path.resolve('/foo/bar', './baz')// 输出结果为'/foo/bar/baz'
+path.resolve('/foo/bar', '/tmp/file/')// 输出结果为'/tmp/file'
+path.resolve('wwwroot', 'static_files/png/', '../gif/image.gif')// 当前的工作路径是 /home/itbilu/node，则输出结果为'/home/itbilu/node/wwwroot/static_files/gif/image.gif'
+const path = require('path');//D:\myProgram\test
+let myPath = path.join(__dirname,'/img/so');//D:\myProgram\test\img\so
+let myPath2 = path.join(__dirname,'./img/so');//D:\myProgram\test\img\so
+let myPath3 = path.resolve(__dirname,'/img/so');//D:\img\so
+let myPath4 = path.resolve(__dirname,'./img/so');//D:\myProgram\test\img\so
 ```
 
 # ES6
@@ -108,15 +95,18 @@ console.log(myPath4);   //D:\myProgram\test\img\so
     一个提案只要能进入 Stage 2，就差不多肯定会包括在以后的正式标准里面。ECMAScript 当前的所有提案，可以在 TC39 的官方网站Github.com/tc39/ecma262查看。
 
 ## 在SwitchCase的case中如果没有{}
-    当词法声明 (let、const、function 和 class) 出现在 case或default 子句中。该词法声明的变量在整个 switch 语句块中是可见的，但是它只有在运行到它定义的 case 语句时，才会进行初始化操作。为了保证词法声明语句只在当前 case 语句中有效，需要用大括号{}将你子句包裹在块中。
+当词法声明 (let、const、function 和 class) 出现在 case或default 子句中。该词法声明的变量在整个 switch 语句块中是可见的，但是它只有在运行到它定义的 case 语句时，才会进行初始化操作。为了保证词法声明语句只在当前 case 语句中有效，需要用大括号{}将你子句包裹在块中。
 
 # Babel
-    Babel的配置文件是.babelrc，存放在项目的根目录下。使用 Babel 的第一步，就是配置这个文件。
-    该文件用来设置转码规则和插件，基本格式如下。
-    {
-      "presets": [],
-      "plugins": []
-    }
+Babel的配置文件是.babelrc，存放在项目的根目录下。使用 Babel 的第一步，就是配置这个文件。该文件用来设置转码规则和插件，基本格式如下。
+
+```js
+{
+  "presets": [],
+  "plugins": []
+}
+```
+
 ##  presets
     presets字段设定转码规则，官方提供以下的规则集，你可以根据需要安装。
     # 最新转码规则
@@ -147,12 +137,32 @@ console.log(myPath4);   //D:\myProgram\test\img\so
 <img src="presets没有设置stage-2.png" />
 
 ### presets打包优化
+presets中已经包含了一组用来转换ES6+的语法的插件，如果只使用少数新特性而非大多数新特性，可以不使用preset而只使用对应的转换插件。
+
+babel默认只转换语法（比如箭头函数、解构赋值、class等语法），而不转换新的API（比如Map，Set，Promise），如需使用新的API，还需要使用对应的转换插件或者polyfill。
+
+- 使用babel-polyfill(不使用useBuiltIns)
+  - 优点：一次性解决所有兼容性问题,而且是全局的,浏览器的console也可以使用
+  - 缺点：一次性引入了ES6+的所有polyfill，打包后的js文件体积会偏大，对于现代的浏览器，有些不需要polyfill，造成流量浪费，污染了全局对象，不适合框架或库的开发。
+- 使用babel-preset-env插件和useBuiltIns属性。我的理解是从字面上来看出发点是适配环境的问题，比如支持react的jsx语法，比如支持stage-2的语法（比如...语法），比如支持浏览器版本等跟环境相关的。
+  - 优点：按需(按照指定的浏览器环境所需)引入polyfill, 一定程度上减少了不必要polyfill的引入。
+  - 缺点：解决问题的角度不一样，主要是处理环境方面的适配，比如并没办法支持generate语法。
+- 使用babel-plugins。主要用于针对某个特性需要的转义，比如支持写在class的属性transform-class-properties插件。支持import和export的add-module-exports插件。等等
+    - 优点：配置完一个转换插件后, 代码中每个使用这个API的地方的代码都会被转换成使用polyfill中实现的代码。作用域是模块,避免全局冲突。是按需引入,避免不必要引入造成及代码臃肿。
+    - 缺点：每个模块内单独引用和定义polyfill函数,造成了重复定义,使代码产生冗余。
+  - 使用插件 babel-runtime 与 babel-plugin-tranform-runtime。抽离了公共模块，避免了重复引入，从core.js的库中引入所需polyfill
+    - 简单来说，就是提供了比较多的通用的公共模块。其实也是一个插件。但是对[].includes(x), 依赖于Array.prototype.include仍无法使用。
+    - 优点：无全局污染
+    - 优点：依赖统一按需引入(polyfill是各个模块共享的), 无重复引入, 无多余引入
+    - 优点：适合用来编写lib(第三方库)类型的代码
+    - 缺点：被polyfill的对象是临时构造并被import/require的,并不是真正挂载到全局
+    - 缺点：由于不是全局生效, 对于实例化对象的方法,如[].include(x), 依赖于Array.prototype.include仍无法使用。因为这些在转换时并没办法被显示的检查出来。
     {
       "presets": [
         ["env",{
           "modules": false,// 模块化交给webpack处理
           "useBuiltIns":"usage",// "usage" | "entry" | false, defaults to false.
-          "targets": {"browsers": ["safari >= 7", "ie>=8"]}
+          "targets": {"browsers": ["safari >= 7", "ie>=8"]}// 浏览器或者node环境
         }],
         "react",
         "stage-2"
@@ -271,6 +281,7 @@ module: {
   "eslint-loader": "^2.1.1",
 }
 ```
+
 ## 配置文件（eslintrc.json）
 - 要在配置文件中设置 parser 为 babel-eslint ，意思是用babel转换之后再给eslint验证，否则有些es6的语法可能eslint并无法识别。
 - babel-eslint，eslint，eslint-plugin-react主要用于eslintrc.json的配置。
@@ -332,7 +343,7 @@ module: {
 
 ## 增加钩子让用户在提交前都执行以下eslint。
 Git hooks made easy
-在package.json增加husky依赖，同时配置commit之前和push之前需要执行的命令，强制用户执行eslint检查。
+在package.json增加husky（哈士奇）依赖，同时配置commit之前和push之前需要执行的命令，强制用户执行eslint检查。
 
 ```javascript
 {
@@ -415,14 +426,14 @@ Git hooks made easy
 
 ## webpack性能优化（详见性能优化图片相关的优化）
 - 合并和拆分。合并业务代码，拆分公共代码。splitChunks
-- 图片优化。雪碧图。url-loader和file-loader配合只用。
+- 图片优化。雪碧图。url-loader和file-loader配合使用。limit8k的图通过file-loader直接打入css里面。超过8K的再用url-loader加载。可以和雪碧图综合考虑。
 - 压缩js和css。UglifyJsPlugin、OptimizeCSSAssetsPlugin
 - 样式表用link引入，并置顶。
 
 ## 样式表的Loader style-loader css-loader sass-loader
 - css-Loader把css通过<link/>引入，而style-loader把css放到<styles/>里面。
 - css-loader要配合MiniCssExtractPlugin.loader会把css进行抽取独立文件。
-- css-loader要启用modules=true，在代码里面才能import styles from 'style.css'。同时设置localIdentName规则对css的名称设置唯一id，防止全名冲突。
+- css-loader要启用modules=true，在代码里面才能import styles from 'style.css'。才可以设置localIdentName规则，让css的名称唯一防止全名冲突。
 - 可以开启OptimizeCSSAssetsPlugin对css进行压缩。
 
 ```js
@@ -480,7 +491,9 @@ devServer: {
 
 ### 联系
 - 当有文件超过`url-loader`指定的文件大小后，不会被打包到js里面，但是它就变成需要`file-loader`加载否则会报错。
-- 把小图片打包到js里面减少请求次数各有利弊。优点：可以减少小图片的请求次数，降低网络IO的请求次数。缺点：图片会被转换成base64的格式和js一起打包进入会带出新的问题，就是这样会导致css变大，这样加载单个css可能需要的时长会更长。另外，base64的算法是把原来的数据每3位用4位替换，这样原来如果是1，就会变成4/3，相当于比原来大了1/3。
+- 把小图片打包到js里面减少请求次数各有利弊。
+  - 优点：可以减少小图片的请求次数，降低网络IO的请求次数。
+  - 缺点：图片会被转换成base64的格式和js一起打包进入会带出新的问题，就是这样会导致css变大，这样加载单个css可能需要的时长会更长。另外，base64的算法是把原来的数据每3位用4位替换，这样原来如果是1，就会变成4/3，相当于比原来大了1/3。
 - 因此是否需要使用url-loader把小图片打包到js文件需要权衡后再做决定。把小图片打包到js需要做的牺牲就是js文件会变大。
 - file-loader实现的是懒加载，只有在页面需要用到具体的元素才会加载，否则并不会加载。这样能提高整体的性能。
 
@@ -504,9 +517,22 @@ devServer: {
 }
 ```
 
-# React
+# 安全
+## XSS和CSRF
+- XSS跨站脚本攻击Cross Site Scripting
+- CSRF跨站请求伪造Cross-site request forgery
 
-## React中对XSS如何进行XSS攻击和防范
+## 原理
+- XSS通过合法的途径输入不合法的内容。
+- CSRF用户登录过后拿到用户的cookie然后伪造用户的请求。
+
+## 防御
+- XSS转义输入内容，过滤敏感字符
+- CSRF增加token验证。
+
+## 其他
+
+### React中对XSS如何进行XSS攻击和防范
 - prerender / SSR 的 hydrate 过程会生成 html ，需要小心测试其中是否有 XSS 漏洞。
 - dangerouslySetInnerHTML、onload=字符串、href=字符串 等，都有可能造成 XSS 漏洞。
 - 所有的用户输入都需要经过HTML实体编码，这里React已经帮我们做了很多，它会在运行时动态创建DOM节点然后填入文本内容（你也可以强制设置HTML内容，不过这样比较危险）。
@@ -594,7 +620,7 @@ if (valid) {
 - HTML 转义是非常复杂的，在不同的情况下要采用不同的转义规则。如果采用了错误的转义规则，很有可能会埋下 XSS 隐患。
 - 应当尽量避免自己写转义库，而应当采用成熟的、业界通用的转义库。
 
-## 漏洞总结
+### 漏洞总结
 - 在 HTML 中内嵌的文本中，恶意内容以 script 标签形成注入。
 - 在内联的 JavaScript 中，拼接的数据突破了原本的限制（字符串，变量，方法名等）。
 - 在标签属性中，恶意内容包含引号，从而突破属性值的限制，注入其他属性或者标签。
@@ -603,6 +629,8 @@ if (valid) {
 - 在 style 属性和标签中，包含类似 background-image:url("javascript:..."); 的代码（新版本浏览器已经可以防范）。
 - 在 style 属性和标签中，包含类似 expression(...) 的 CSS 表达式代码（新版本浏览器已经可以防范）。
 - 总之，如果开发者没有将用户输入的文本进行合适的过滤，就贸然插入到 HTML 中，这很容易造成注入漏洞。攻击者可以利用漏洞，构造出恶意的代码指令，进而利用恶意代码危害数据安全。
+
+# react
 
 ## react router
 - 未装propTypes报错Cannot read property 'array' of undefined
@@ -617,30 +645,84 @@ if (valid) {
 
 简单来说，当我们dispatch一个action后，先发到reducer，然后saga同时也收到了一份，这时候saga可以put出新的action给reducer接收。
 
+换句话来说，saga是监听redux总线上的数据，原来怎么dispatch还是按照原来的走，当saga监听到action后可以自己做一些处理然后put出新的action。
+
 ## react性能优化
 
 ### 多次render的优化。合理使用container和dump
-有些组件的数据都是从父组件一直传递到子组件，这样当父组件渲染的时候，子组件也会跟着渲染。所以比如list，dialog等类型的组件我都是让在redux里面，然后container进行connect。只有这些变化的时候才会重新render，否则父组件重新render也不会让子组件重新render因为，子组件的props都没有变化。
+有些组件的数据都是从父组件一直传递到子组件，这样当父组件渲染的时候，子组件也会跟着渲染。所以比如list，dialog等类型的组件应该是在redux里面，然后container进行connect。只有这些变化的时候才会重新render，否则父组件重新render也不会让子组件重新render因为，子组件的props都没有变化。
 
 ### 多次render的优化。定制shouldComponentUpdate函数
 shouldComponentUpdate(nextProps,nextState) false不render，true才render。如果啥也不反悔默认返回true。在最新的react中，react给我们提供了React.PureComponent，官方也在早期提供了名为react-addons-pure-render-mixin插件来重新实现shouldComponentUpdate生命周期方法。
 
 ### 多次render的优化。immutable与with-immutable-props-to-js
-建议使用seamless-immutable。javascript中的对象一般都是可变的，因为使用了引用赋值，新的对象简单的引用了原始对象，改变新对象将影响到原始对象。这样做非常的昂贵，对cpu和内存会造成浪费。
+建议使用seamless-immutable。javascript中的对象一般都是可变的，因为使用了引用赋值，新的对象简单的引用了原始对象，改变新对象将影响到原始对象。这样做非常的昂贵，对cpu和内存会造成浪费。可以用withImmutablePropsToJs再包一层，保证在组件拿到的props后是同一个对象，只要对比值就可以了。
 
 ### 消耗性能的优化。针对react的diff算法加入key，防止最坏情况的发生
 react为了追求高性能，采用了时间复杂度为O(N)来比较两个属性结构的区别。传统的比较两个树形结构，需要通过O(N^3)，这样性能很低。
 
-两个节不一样最坏时间复杂度。O(N)的最坏时间复杂度。也就是说避免这种情况：组件A`<div><Todos /></div>`和组件B`<span><Todos /></span>`，这样一对比在第一个节点就发现不一样了，结果底下的全部都换掉。
+两个节不一样最坏时间复杂度。O(N)的最坏时间复杂度。也就是说避免这种情况：把`<div><Text1 /><Text2 /></div>`改成`<div><Text2 /><Text1 /></div>`，react在对比的时候发现Text1和Text2不是同一个组件然后就直接销毁了，再重新生成，但是事实上他们只是换了一下顺序而已。
 
 两个节点一样但是顺序不一样，同样也会导致最坏时间复杂度。这种情况要避免其实很简单，就是加入唯一key，这样react就会根据key的变化，而不是根据顺序进行diff计算了。
+设置key不能用index，举一个例子：
+
+注意：以下例子是反例，需要说明几个正确的结论
+- 列表最好要加key
+- 不能用index作为key
+- 最好使用id作为key
+
+```jsx
+export default class Example2 extends Component{
+  constructor(props){
+		super(props)
+		this.state={
+			data:['a','b','c','d']
+		}
+  }
+  handleChange = () => {
+    this.setState({
+      data:['d','c','b','a']
+    })
+  }
+  render(){
+    	return <div>
+    		{
+    			this.state.data.map((val,idx)=><Item key={idx} parentValue={val} />)
+    		}
+    		<button onClick={this.handleChange}>改变state</button>
+    	</div>
+    }
+}
+```
+ReactEmptyComponent空组件
+ReactTextComponent文本组件
+ReactDOMComponent浏览器组件
+ReactCompositeComponent自定义组件
+
+上面实例中在数组重新排序后，key对应的实例都没有销毁，而是重新更新。具体更新过程我们拿key=0的元素来说明， 数组重新排序后：
+
+1. 首先，state改变肯定会引起重新render。组件重新render后得到新的虚拟dom；
+2. 新老两个虚拟dom进行diff，新老版的都有key=0的组件，react认为同一个组件，则只可能更新组件；
+3. 然后比较其children，子组件有两个，一个是文本组件ReactTextComponent，另一个是浏览器的input组件ReactDOMComponent
+4. 文本组件是受控组件，值变化了，重新render，重新赋值。
+5. input组件是非受控组件，由于父组件重新render了所以自己也重新render，但是并没有重新赋值。
+
+这里需要说几个事情
+- input是非受控组件，可以重新render但是它的值并没有改变
+- key=0的组件并没有销毁，而是进行了diff比较
+- 重新render和重新赋值是两个概念。
+- 受控和非受控最好不好互相转换。
+  - 把受控组件转成非受控组件，会导致受控在某处就断开了。
+  - 把非受控组件转成非空组件，并且在willReceive判断进行setState以此来达到受控的目的，会导致有时候外部一个改变直接导致了非受控组件的变化，把自己的值都清空了。
+- 比如有几个组件<Text1 /><Text2 />，把`<div><Text1 /><Text2 /></div>`改成`<div><Text2 /><Text1 /></div>`，如果没有加key，会导致<Text1 />和<Text2 />先销毁然后再重新生成。这样会很消耗性能。但是如果加了key`<div><Text1 key=1 /><Text2 key=2 /></div>`当变成了`<div><Text2 key=2 /><Text1 key=1 /></div>`react会知道不用销毁，只要调整一下顺序即可，也就是只要重新render执行更新的生命周期就行了，这样就减少了不必要的性能浪费。
+
 
 ### 消耗内存的优化。render里面尽量减少新建变量和bind函数，传递参数是尽量减少传递参数的数量。
-onClick={this.handleClick}构造函数每一次渲染的时候只会执行一遍；这种方法最好。这种写法初学者经常会遇到的一个问题就是undefined，这是因为没有使用箭头函数。普通函数中，this指向其函数的直接调用者；箭头函数中，this指向其定义环境，任何方法都改变不了其指向，如call（）、bind（）等；构造函数中，如果不使用new,则this指向window，如果使用new创建了一个实例，则this指向该实例。
+`onClick={this.handleClick}`构造函数每一次渲染的时候只会执行一遍；这种方法最好。这种写法初学者经常会遇到的一个问题就是undefined，这是因为没有使用箭头函数。普通函数中，this指向其函数的直接调用者；箭头函数中，this指向其定义环境，任何方法都改变不了其指向，如call（）、bind（）等；构造函数中，如果不使用new,则this指向window，如果使用new创建了一个实例，则this指向该实例。
 
-onClick={this.handleClick.bind(this)}在每次render()的时候都会重新执行一遍函数。
+`onClick={this.handleClick.bind(this)}`在每次render()的时候都会重新执行一遍函数。
 
-onClick={()=>{this.handleClick()}}每一次render()的时候，都会生成一个新的箭头函数，即使两个箭头函数的内容是一样的。
+`onClick={()=>{this.handleClick()}}`每一次render()的时候，都会生成一个新的匿名函数，即使两个箭头函数的内容是一样的。
 
 ```javascript
 // A
@@ -656,12 +738,10 @@ onClick={()=>{this.handleClick()}}每一次render()的时候，都会生成一�
 </ul>
 ```
 
-### redux优化
-
 # Immutable
 
 ##  基本规范state.set('key',value)
-- 如果value是基础类型，比如number，string等，建议可以直接这样set进去。
+- 如果value是基础类型，比如number，string等，是可以直接这样set进去。
 - 如果value是对象类型，比如map，list等，可以fromJS(value)再设置进去。
 - 因为`state.set('key',fromJS(1))`和`state.set('key',1)`，在`state.get('key')`是一样的。但是，`state.set('key',fromJS({a:1}))`和`state.set('key',{a:1})`，在`state.get('key')`是不一样的。前者get出来的是一个immutable对象，后者get出来的是一个js对象。
 - 所以综上所述，在set的时候，如果是基础类型可以直接set，如果是对象类型要先`fromJS()`再set进去。
@@ -683,7 +763,7 @@ onClick={()=>{this.handleClick()}}每一次render()的时候，都会生成一�
 - 控制反转就是把原来自己控制的权限转交给外部控制的过程叫做控制反转，也叫控制转移。
 - 依赖注入就是把控制权转交出去，依赖查找就是外部容器控制这个对象。
 
-```javascript
+```js
 class IoC {
     constructor() {
         this.context = {}
@@ -705,7 +785,7 @@ class IoC {
 
 ## 面向切面
 - 面向切面编程其实就是代理模式
-- 表单引擎在预编译的时候把this._onChange与this._aop绑定在一起，在onChange运行时的时候才真正去出发this._aop中的方法。
+- 表单引擎在预编译的时候把this._onChange与this._aop绑定在一起，在onChange运行时的时候才真正去触发this._aop中的方法。这就相当于是一个表达式还没有真正执行。
 - 面向切面编程，通过预编译方式和运行期动态代理实现程序功能的统一维护的一种技术。每个组件把自己转交给IoC容器，然后继承BaseComponent在切面中编写代码。实例化IoC容器，并且把组件注入到容器中。绑定aop切面，让子类可以方便的使用aop切面。
 
 ```javascript
@@ -735,7 +815,7 @@ export class BaseComponent extends Component {
 - 代理模式。就类似AOP切面编程。
 - 中介者模式。通过dependencies把状态传出去。
 - 观察者模式。
-- 模块模式。
+- 模块模式。如下实例代码。
 
 ```js
 var Counter = (function() {
@@ -795,33 +875,41 @@ console.log(Counter2.value()); /* logs 0 */
 ```
 
 ## 设计原则
-
-### 简单，单一，尽量少互相依赖，可扩展不可修改，尽量组合。
+### 基本概念介绍
 - 单一职责原则（Single Responsibility Principle）
   - 优点：类的复杂性降低，可读性提高。一个类应该只有一个发生变化的原因。类、函数和接口都要要遵循单一职责原则。遵守单一职责原则，将不同的职责封装到不同的类或模块中。
   - 举例：比如常用的radio组件，一个是button，另一个是group。其实很简单就是一个选中操作，但是经常会有需求出现一个group中只能选中一个radio，在这里会分成两个组件。一个是radio很简单就是一个render组件，另一个是控制子节点选中的状态，也很简单用来维护状态就行了。
+
 - 接口隔离原则（Interface Segregation Principle）
   - 特点：应当为客户端提供尽可能小的单独的接口，而不是提供大的总的接口。使用多个专门的接口比使用单一的总接口要好。
   - 举例：比如tab切换后要选中第1项，那么我会提供两个接口来给外部调用，一个是切换tab，另一个是选中第1项。
+
 - 迪米特法则（Law Of Demeter）
   - 特点：又叫最少知识原则，一个软件实体应当尽可能少的与其他实体发生相互作用。
-  - 举例：dependencies从开发人员的角度出发是开闭原则，从引擎的角度出发是迪米特法则。还有类似的比如
-- 开闭原则（Open Close Principle）
-  - 特点：面向扩展开放，面向修改关闭。稳定，灵活，可扩展。
-  - 举例：组件通信，字段之间的关联关系。通过dependencies，中介者模式。引擎把组件之间需要互相调用的所有数据都传递出去给中介者，用户可以在中介者里面修改组件如何通讯。比如说一个评分组件可以评1~5分，1分和5分要说明原因所以会出现一个textarea的组件，2-4分不用说明原因。那么引擎不能把这个逻辑直接实现，而是把组件之间的状态都传递出去，给用户自己去实现。不然将来万一要变就会导致需要重新修改引擎，所以引擎把重心放在组件的数据状态传递出去，给用户自己实现，因为需要控制的权限已经在IoC容器里面，完全可以达到目的。
-
-### 依赖抽象不要依赖具体，用基类定义子类替换，
-- 依赖倒置原则（Dependence Inversion Principle）
-  - 特点：实现尽量依赖抽象，不依赖具体实现。
-  - 举例：List容器依赖抽象实现，在map循环数组的时候把renderItem放给外面，给外面定义，本身只是抽象的调用了renderItem方法表示在这个位置会有一个Item。因为Item可能会有上下结构，也可能会有左右结构，可能会有图片按钮，这些要放给外面去实现。而不能具体的把这个item就直接实现成左右或者上下结构，这样当用户需要修改的时候就无法修改变成重新复制一份出来修改。
+  - 举例：dependencies从开发人员的角度出发是开闭原则，从引擎的角度出发是迪米特法则。还有类似的比如状态模式。我只要能访问调用它的方法就好了，至于它里面是怎么做的我并不关心。
 
 - 里氏替换原则（Liskov Substitution Principle）
   - 特点：用父类定义，用子类赋值。超类存在的地方，子类是可以替换的。子类继承了父类的方法，同时子类还可以扩展自己的方法。面向对象的语言的三大特点是继承、封装、多态，里氏替换原则就是依赖于继承、多态这两大特性。
   - 举例：容器类，都需要渲染this.props.children，但是不容的容器对children渲染方式都不一样，比如List容器，Tabs容器。因此我们定义了baseContainer基类实现了渲染children的方法，然后ListContainer和TabsContainer去继承这个基类，定义自己的渲染方式。基类只是把children渲染出来，子类则是定义了渲染后如何展示。
 
-### 其他补充
+- 开闭原则（Open Close Principle）
+  - 特点：面向扩展开放，面向修改关闭。稳定，灵活，可扩展。
+  - 举例：组件通信，字段之间的关联关系。通过dependencies，中介者模式。引擎把组件之间需要互相调用的所有数据都传递出去给中介者，用户可以在中介者里面修改组件如何通讯。比如说一个评分组件可以评1~5分，1分和5分要说明原因所以会出现一个textarea的组件，2-4分不用说明原因。那么引擎不能把这个逻辑直接实现，而是把组件之间的状态都传递出去，给用户自己去实现。不然将来万一要变就会导致需要重新修改引擎，所以引擎把重心放在组件的数据状态传递出去，给用户自己实现，因为需要控制的权限已经在IoC容器里面，完全可以达到目的。
+
+- 依赖倒置原则（Dependence Inversion Principle）
+  - 特点：实现尽量依赖抽象，不依赖具体实现。
+  - 举例：List容器依赖抽象实现，在map循环数组的时候把renderItem放给外面，给外面定义，本身只是抽象的调用了renderItem方法表示在这个位置会有一个Item。因为Item可能会有上下结构，也可能会有左右结构，可能会有图片按钮，这些要放给外面去实现。而不能具体的把这个item就直接实现成左右或者上下结构，这样当用户需要修改的时候就无法修改变成重新复制一份出来修改。
+
 - 组合/聚合复用原则（Composite/Aggregate Reuse Principle CARP）尽量使用合成/聚合达到复用，尽量少用继承。
   - 特点： 一个类中有另一个类的对象。对比继承子类会被父类污染。但是如果是非常明确的一定必须要有的，继承依然可以使用。组合比较灵活。
+
+### 我的理解
+- 依赖倒置。List组件里面的item在实现的时候应该依赖于抽象，而不是具体的把item实现成某个布局。这个符合依赖倒置。
+- 开闭原则。在外部可以很方面的修改item的渲染方式，看是要做成左右结构还是上下结构。这个符合开闭原则。
+- 单一职责。有一个需求用户输入email之后可以点击＋在添加一个email输入框继续添加。这个可以做成两个独立的组件，一个email，一个appendContainer。他们的职责很简单，emial可以用来提供用户输入email还有输入框的基本样式。而appendContainer则用来复制创建子元素，并把数据准确的传递给指定的元素。
+- 接口隔离。和服务端接口交互尽量小而单独，而不是大而总的接口。tab组件有3个列表待使用，待审核，已完成。点击按钮之后跳转到第2个列表的第1项。那这时候应该是提供两个接口，一个是切换tab的，另一个是选中列表项的，而不是一个接口全部搞定。
+- 迪米特法则。最少知道原则。在组件通信的时候引擎认为只要把这些组件运行时的状态和数据抛出去就行了，剩下的由开发人员去做，引擎不用关心怎么做，只要做好自己的事情就好了。
+- 里氏替换。父类定义子类赋值。用BaseContainer定义了变量，在具体实现的时候指定了具体的TableContainer，ListContainer，AppendContainer。
 
 # HTTPS
 
@@ -880,47 +968,144 @@ a(() => {
 # 数据库同步，升级indexDB
 参考svn的同步机制，是否已同步syncFlag，true已同步，false未同步。version比较。
 - syncFlag false
-  - 客户端版本大于服务端版本，push数据
-  - 客户端版本等于服务端版本，数据冲突
-  - 客户端版本小于服务端版本，pull数据
+  - 客户端版本 > 服务端版本，不存在。
+  - 客户端版本 = 服务端版本，push数据。
+  - 客户端版本 < 服务端版本，数据冲突。
 - syncFlag true
-  - 正常情况下，客户端版本不会大于服务端版本。
-  - 客户端版本等于服务端版本，不操作。
-  - 客户端版本小于服务端版本，pull数据。
+  - 客户端版本 > 服务端版本，不存在。
+  - 客户端版本 = 服务端版本，不操作。
+  - 客户端版本 < 服务端版本，pull数据。
   
-# Event Loop
 
-## 前置知识
 
-### 堆（Heap）
-堆是一种数据结构，是利用完全二叉树维护的一组数据，堆分为两种，一种为最大堆，一种为最小堆，将根节点最大的堆叫做最大堆或大根堆，根节点最小的堆叫做最小堆或小根堆。
-堆是线性数据结构，相当于一维数组，有唯一后继。
+# js三座大山
+原型与原型链，作用域及闭包，异步和单线程
 
-### 栈（Stack）
-栈在计算机科学中是限定仅在表尾进行插入或删除操作的线性表。 栈是一种数据结构，它按照后进先出的原则存储数据，先进入的数据被压入栈底，最后的数据在栈顶，需要读数据的时候从栈顶开始弹出数据。
-栈是只能在某一端插入和删除的特殊线性表。
+## 原型与原型链
 
-### 队列（Queue）
-特殊之处在于它只允许在表的前端（front）进行删除操作，而在表的后端（rear）进行插入操作，和栈一样，队列是一种操作受限制的线性表。
-进行插入操作的端称为队尾，进行删除操作的端称为队头。
-队列中没有元素时，称为空队列。
-队列的数据元素又称为队列元素。在队列中插入一个队列元素称为入队，从队列中删除一个队列元素称为出队。因为队列只允许在一端插入，在另一端删除，所以只有最早进入队列的元素才能最先从队列中删除，故队列又称为先进先出（FIFO—first in first out）
+<img src="原型与原型链.png" />
 
-## 任务队列
+### 继承和重写
+
+```js
+// 让我们从一个自身拥有属性a和b的函数里创建一个对象o：
+let f = function () {
+   this.a = 1;
+   this.b = 2;
+}
+/* 这么写也一样
+function f() {
+  this.a = 1;
+  this.b = 2;
+}
+*/
+let o = new f(); // {a: 1, b: 2}
+
+// 在f函数的原型上定义属性
+f.prototype.b = 3;
+f.prototype.c = 4;
+
+// 不要在 f 函数的原型上直接定义 f.prototype = {b:3,c:4};这样会直接打破原型链
+// o.[[Prototype]] 有属性 b 和 c
+//  (其实就是 o.__proto__ 或者 o.constructor.prototype)
+// o.[[Prototype]].[[Prototype]] 是 Object.prototype.
+// 最后o.[[Prototype]].[[Prototype]].[[Prototype]]是null
+// 这就是原型链的末尾，即 null，
+// 根据定义，null 就是没有 [[Prototype]]。
+
+// 综上，整个原型链如下: 
+
+// {a:1, b:2} ---> {b:3, c:4} ---> Object.prototype---> null
+
+console.log(o.a); // 1
+// a是o的自身属性吗？是的，该属性的值为 1
+
+console.log(o.b); // 2
+// b是o的自身属性吗？是的，该属性的值为 2
+// 原型上也有一个'b'属性，但是它不会被访问到。
+// 这种情况被称为"属性遮蔽 (property shadowing)"
+
+console.log(o.c); // 4
+// c是o的自身属性吗？不是，那看看它的原型上有没有
+// c是o.[[Prototype]]的属性吗？是的，该属性的值为 4
+
+console.log(o.d); // undefined
+// d 是 o 的自身属性吗？不是，那看看它的原型上有没有
+// d 是 o.[[Prototype]] 的属性吗？不是，那看看它的原型上有没有
+// o.[[Prototype]].[[Prototype]] 为 null，停止搜索
+// 找不到 d 属性，返回 undefined
+```
+
+### this指向
+```js
+var o = {
+  a: 2,
+  m: function(){
+    return this.a + 1;
+  }
+};
+console.log(o.m()); // 3
+// 当调用 o.m 时，'this' 指向了 o.
+var p = Object.create(o);
+// p是一个继承自 o 的对象
+p.a = 4; // 创建 p 的自身属性 'a'
+console.log(p.m()); // 5
+// 调用 p.m 时，'this' 指向了 p
+// 又因为 p 继承了 o 的 m 函数
+// 所以，此时的 'this.a' 即 p.a，就是 p 的自身属性 'a'
+```
+
+### 原型链性能
+在原型链上查找属性比较耗时，对性能有副作用，这在性能要求苛刻的情况下很重要。另外，试图访问不存在的属性时会遍历整个原型链。
+
+### 错误实践：扩展原生对象的原型
+经常使用的一个错误实践是扩展 Object.prototype 或其他内置原型。
+
+这种技术被称为猴子补丁并且会破坏封装。尽管一些流行的框架（如 Prototype.js）在使用该技术，但仍然没有足够好的理由使用附加的非标准方法来混入内置原型。
+
+扩展内置原型的唯一理由是支持 JavaScript 引擎的新特性，如 Array.forEach。
+
+## 作用域及闭包
+闭包是函数和声明该函数的词法环境的组合。换句话说说就是，函数和声明该函数的词法环境。
+- 词法作用域。词法作用域中`有效范围`，是变量在代码中`声明的位置`所决定的。嵌套的函数可以访问在其外部声明的变量。
+- 闭包。JavaScript中的函数会形成闭包。 闭包是由`函数`以及`创建该函数的词法环境`组合而成。这个环境包含了这个闭包创建时所能访问的`所有局部变量`。
+
+它们共享相同的函数定义，但是保存了不同的词法环境。
+```js
+function makeAdder(x) {
+  return function(y) {
+    return x + y;
+  };
+}
+var add5 = makeAdder(5);
+var add10 = makeAdder(10);
+console.log(add5(2));  // 7
+console.log(add10(2)); // 12
+```
+
+- 词法环境。let块作用域，var完整作用域
+
+## 异步和单线程Event Loop事件运行机制
+
+### 前置知识
+push(v)修改原数组，返回数组长度。
+pop()修改原数组，返回最后一个对象。
+shift()修改原数组，返回第一个对象。
+unshift(v)修改原数组，返回数组长度。
+
+- 堆（Heap）。unshift在数组头部插入。堆是一种数据结构，是利用完全二叉树维护的一组数据，堆分为两种，一种为最大堆，一种为最小堆，将根节点最大的堆叫做最大堆或大根堆，根节点最小的堆叫做最小堆或小根堆。堆是线性数据结构，相当于一维数组，有唯一后继。
+- 栈（Stack）。push()在数组末尾插入，pop()在数组末尾删除并返回。栈在计算机科学中是限定仅在表尾进行插入或删除操作的线性表。 栈是一种数据结构，它按照后进先出的原则存储数据，先进入的数据被压入栈底，最后的数据在栈顶，需要读数据的时候从栈顶开始弹出数据。栈是只能在某一端插入和删除的特殊线性表。
+- 队列（Queue）。push()在数组末尾插入，shift()在数组头部删除并返回。特殊之处在于它只允许在表的前端（front）进行删除操作，而在表的后端（rear）进行插入操作，和栈一样，队列是一种操作受限制的线性表。进行插入操作的端称为队尾，进行删除操作的端称为队头。队列中没有元素时，称为空队列。队列的数据元素又称为队列元素。在队列中插入一个队列元素称为入队，从队列中删除一个队列元素称为出队。因为队列只允许在一端插入，在另一端删除，所以只有最早进入队列的元素才能最先从队列中删除，故队列又称为先进先出（FIFO—first in first out）
+
+### 任务队列
 在JavaScript中，任务被分为两种，一种宏任务（MacroTask）也叫Task，一种叫微任务（MicroTask）。
+- MacroTask（宏任务）。script全部代码、setTimeout、setInterval、I/O、UI Rendering。
+- MicroTask（微任务）。Promise、process.nextTick (Node独有)、Object.observe、MutationObserver
 
-### MacroTask（宏任务）
-script全部代码、setTimeout、setInterval、I/O、UI Rendering。
-
-### MicroTask（微任务）
-Promise、process.nextTick (Node独有)、Object.observe、MutationObserver
-
-## 执行过程
-执行栈每次扫描js代码，只剥离一层，然后优先执行同步的代码，异步的代码分别放入宏队列和微队列。
-
-在执行微队列microtask queue中任务的时候，如果又产生了microtask，那么会继续添加到队列的末尾，也会在这个周期执行，直到microtask queue为空停止。
-
-当然如果你在microtask中不断的产生microtask，那么其他宏任务macrotask就无法执行了，但是这个操作也不是无限的，拿NodeJS中的微任务process.nextTick()来说，它的上限是1000个。
+### 执行过程
+- 执行栈每次扫描js代码，只剥离一层，然后`优先执行同步的代码，异步的代码分别放入宏队列和微队列`。
+- 在执行微队列microtask queue中任务的时候，如果又产生了microtask，那么会继续添加到队列的末尾，也会在这个周期执行，直到microtask queue为空停止。
+- 当然如果你在microtask中不断的产生microtask，那么其他宏任务macrotask就无法执行了，但是这个操作也不是无限的，拿NodeJS中的微任务process.nextTick()来说，它的上限是1000个。
 
 ```js
 console.log(1);
@@ -941,7 +1126,7 @@ setTimeout(() => {
 })
 console.log(7);
 ```
-### 开始执行
+#### 开始执行
 - step1
     mainStack=[console.log(1)]
     macroQueue=[]
@@ -981,7 +1166,7 @@ console.log(7);
     4
     7
 
-### 全局Script代码执行完了，进入下一个步骤，从microtask queue中依次取出任务执行，直到microtask queue队列为空。
+#### 全局Script代码执行完了，进入下一个步骤，从microtask queue中依次取出任务执行，直到microtask queue队列为空。
 
 - step6
     mainStack=[callback2]
@@ -1079,120 +1264,13 @@ console.log(10);
 9
 8
 
-## 总结
+### 事件运行机制总结
 - 简单来说，主要从执行栈、宏任务队列、微任务队列三个维度去描述。
 - setTimeout等是宏任务，promise等是微任务。
-- 执行栈，顺序执行js每一行代码，遇到异步代码则插入到任务队列。
+- 执行栈，顺序执行js每一行代码，遇到异步代码则插入到任务队列。特别注意new Promise是同步代码，只不过它的callback是异步的应该是把它的callback放入微队列。
 - 优先级，同步的普通代码>微队列>宏队列。执行顺序按照优先级从高到低执行，每一级执行完了才能执行下一级。
-- 微任务或者宏任务执行过程如果还有产生新的任务，则继续插入到任务队列后面。
+- 微任务或者宏任务执行过程如果还有产生新的任务，则继续插入到任务队列后面。微队列有上限1000行。
 
-# js三座大山
-
-## 原型链
-
-### 继承和重写
-
-```js
-// 让我们从一个自身拥有属性a和b的函数里创建一个对象o：
-let f = function () {
-   this.a = 1;
-   this.b = 2;
-}
-/* 这么写也一样
-function f() {
-  this.a = 1;
-  this.b = 2;
-}
-*/
-let o = new f(); // {a: 1, b: 2}
-
-// 在f函数的原型上定义属性
-f.prototype.b = 3;
-f.prototype.c = 4;
-
-// 不要在 f 函数的原型上直接定义 f.prototype = {b:3,c:4};这样会直接打破原型链
-// o.[[Prototype]] 有属性 b 和 c
-//  (其实就是 o.__proto__ 或者 o.constructor.prototype)
-// o.[[Prototype]].[[Prototype]] 是 Object.prototype.
-// 最后o.[[Prototype]].[[Prototype]].[[Prototype]]是null
-// 这就是原型链的末尾，即 null，
-// 根据定义，null 就是没有 [[Prototype]]。
-
-// 综上，整个原型链如下: 
-
-// {a:1, b:2} ---> {b:3, c:4} ---> Object.prototype---> null
-
-console.log(o.a); // 1
-// a是o的自身属性吗？是的，该属性的值为 1
-
-console.log(o.b); // 2
-// b是o的自身属性吗？是的，该属性的值为 2
-// 原型上也有一个'b'属性，但是它不会被访问到。
-// 这种情况被称为"属性遮蔽 (property shadowing)"
-
-console.log(o.c); // 4
-// c是o的自身属性吗？不是，那看看它的原型上有没有
-// c是o.[[Prototype]]的属性吗？是的，该属性的值为 4
-
-console.log(o.d); // undefined
-// d 是 o 的自身属性吗？不是，那看看它的原型上有没有
-// d 是 o.[[Prototype]] 的属性吗？不是，那看看它的原型上有没有
-// o.[[Prototype]].[[Prototype]] 为 null，停止搜索
-// 找不到 d 属性，返回 undefined
-```
-
-### this指向
-```js
-var o = {
-  a: 2,
-  m: function(){
-    return this.a + 1;
-  }
-};
-console.log(o.m()); // 3
-// 当调用 o.m 时，'this' 指向了 o.
-var p = Object.create(o);
-// p是一个继承自 o 的对象
-p.a = 4; // 创建 p 的自身属性 'a'
-console.log(p.m()); // 5
-// 调用 p.m 时，'this' 指向了 p
-// 又因为 p 继承了 o 的 m 函数
-// 所以，此时的 'this.a' 即 p.a，就是 p 的自身属性 'a'
-```
-
-### 原型链性能
-在原型链上查找属性比较耗时，对性能有副作用，这在性能要求苛刻的情况下很重要。另外，试图访问不存在的属性时会遍历整个原型链。
-
-### 错误实践：扩展原生对象的原型
-经常使用的一个错误实践是扩展 Object.prototype 或其他内置原型。
-
-这种技术被称为猴子补丁并且会破坏封装。尽管一些流行的框架（如 Prototype.js）在使用该技术，但仍然没有足够好的理由使用附加的非标准方法来混入内置原型。
-
-扩展内置原型的唯一理由是支持 JavaScript 引擎的新特性，如 Array.forEach。
-
-## 闭包
-闭包是函数和声明该函数的词法环境的组合。换句话说说就是，函数和声明该函数的词法环境。
-- 词法作用域。词法作用域中`有效范围`，是变量在代码中`声明的位置`所决定的。嵌套的函数可以访问在其外部声明的变量。
-- 闭包。JavaScript中的函数会形成闭包。 闭包是由`函数`以及`创建该函数的词法环境`组合而成。这个环境包含了这个闭包创建时所能访问的`所有局部变量`。
-
-它们共享相同的函数定义，但是保存了不同的词法环境。
-```js
-function makeAdder(x) {
-  return function(y) {
-    return x + y;
-  };
-}
-var add5 = makeAdder(5);
-var add10 = makeAdder(10);
-console.log(add5(2));  // 7
-console.log(add10(2)); // 12
-```
-
-- 词法环境。let块作用域，var完整作用域
-
-## 同步异步
-
-# web workers
 
 # 其他
 ## 状态码
@@ -1222,8 +1300,7 @@ console.log(add10(2)); // 12
 # 技术栈
 
 ## 基础部分
-### 页面布局
-- 几种布局方式。float，position，flex，table，grid
+- 页面布局。几种布局方式。float，position，flex，table，grid
 
 ### css盒子模型
 - 标准盒子模型box-sizing:content-box
@@ -1253,9 +1330,8 @@ console.log(add10(2)); // 12
   - Header压缩：HTTP1的Header信息没有压缩每次都需要几百~几千字节。HTTP2用HPACK压缩算法，减小header的大小，记录header并维护索引表，下次再传输只要找到对应的索引就可以，不用重复传递太多的额外信息。
   - 服务端push。
   - 更安全。使用了tls的拓展ALPN做为协议升级，禁用不安全的算法。
-  
 
-### 原型链
+### 原型与原型链
 - 创建对象有几种方法。
 ```js
 // 第一种
@@ -1269,7 +1345,6 @@ var P={name:'o3'}
 var o3 = Object.create(P)
 ```
 - 构造函数`M`、原型对象`M.prototype`、实例`new M()`、原型链`__proto__`
-
 - instanceof的原理。判断`实例对象`的`__proto__`是不是`原型对象`
 - new运算符
 
@@ -1285,6 +1360,7 @@ var o3 = Object.create(P)
       Child.prototype = new Parent()。parentName属性在子类找不到就去__proto__去找，而__proto__指向了prototype，所以就找到了父类的parentName。
       缺点是c1=new child();c2=new child()。修改c1和c2的属性会指向同一个对象。这是因为prototype共用了一个对象。这种方法要特别注意prototype不要指向同一个对象。
     - 组合继承。object.create()
+
 ### 通信类
 - 什么是同源策略及限制。协议，域名，端口要一致。不能操作cookie，localstorage，indexDB。DOM无法获得。AJAX请求不能发送跨域。
 - 前后端如何通信。ajax，WebSocket不限制同源策略，CORS支持跨域和同源
@@ -1295,6 +1371,7 @@ var o3 = Object.create(P)
   - PostMessage。A发送postMesage('data',url)，B接收window.addEventListener('message',function)
   - WebSocket。new WebSocket(url)。emit提交、onopen、onmessage监听、onclose，客户端和服务端通过emit和onmessage实现通讯。
   - CORS。fetch后.then.catch
+
 ### 安全类
 - XSS
   - 基本概念。跨站脚本攻击。
@@ -1312,11 +1389,16 @@ var o3 = Object.create(P)
 
 ## 高级部分
 渲染机制，JS运行机制，页面性能，错误监控
+
 ### 渲染机制
-- 
+- 什么是DOCTYPE及作用。文档类型定义。html5`<!DOCTYPE html>` html4。告诉浏览器是什么文档类型，然后浏览器使用不懂的引擎渲染。
+- 浏览器渲染过程。DOM tree + CSS tree => Render Tree => layout计算整个dom的宽高位置等全部的信息 => painting => display
+- 重排reflow。本质上改变了盒子模型。一般导致reflow就会导致repaint。增加删除修改dom。通过css修改dom。修改字体。
+- 重绘repaint。盒子模型没变但是里面的颜色变了。
+- 布局layout。
 
 ### js运行机制
-- 
+- event loop
 
 ### 页面性能
 - 资源压缩合并，减少HTTP请求
@@ -1347,29 +1429,87 @@ var o3 = Object.create(P)
 
 ### mvvm框架
 - MVC：model，view，controller。controller控制model如何在view显示。model和view对controller的数据流向都是单向的，从controller到model和view。
-- MVVM，model，view，ViewModel。ViewModel双向View，model通过修改viewModel
+- MVVM，model，view，ViewModel。ViewModel双向View，model通过ajax等方式修改viewModel。弱化了controller的存在。
 - 双向绑定
   - 正向。通过模板把数据放到模板中freemarker。
   - 反向。view的改变反应到data中。
   - 绑定。自动处理。Object.defineProperty。
-- 设计模式
-  - 
 - 生命周期
   - 为什么说componentWillMount、componentWillReceive、componentWillUpdate不安全
-    - 在componentWillMount请求数据并不能保证一定能在render之前就把数据返回回来。两者依然是异步的。
-    - componentWillReceive
-    - componentWillUpdate
-  - 引入的getDerivedStateFromProps、getSnapshotBeforeUpdate有什么作用
     - 
+  - 引入的getDerivedStateFromProps、getSnapshotBeforeUpdate有什么作用
+    - static getDerivedStateFromProps(nextProps, prevState)
+      - 静态方法，新props和当前state，返回的对象用来更新state，返回 null 则不更新任何内容。
+      - 在React v16.3时setState和forceUpdate不会触发该方法，据说是失误后来修复了。也就是说最新版本的：props改变，setState，forceUpdate都会触发该方法getDerivedStateFromProps。
+      - getDerivedStateFromProps 的存在只有一个目的：让组件在 props 变化时更新 state。可以完美的解决willreceive的问题。
+    - getSnapshotBeforeUpdate() 被调用于render之后componentDidUpdate之前，return的值会传入到componentDidUpdate里面
+```js
+class ExampleComponent extends React.Component {
+  state = {
+    isScrollingDown: false,
+    lastRow: null
+  }
+  static getDerivedStateFromProps(nextProps, prevState) {
+    if (nextProps.currentRow !== prevState.lastRow) {
+        return {
+            isScrollingDown:
+            nextProps.currentRow > prevState.lastRow,
+            lastRow: nextProps.currentRow
+        }
+    }
+    return null
+  }
+}
+
+```
+
+```js
+class ScrollingList extends React.Component {
+  constructor(props) {
+    super(props);
+    this.listRef = React.createRef();
+  }
+
+  getSnapshotBeforeUpdate(prevProps, prevState) {
+    //我们是否要添加新的 items 到列表?
+    // 捕捉滚动位置，以便我们可以稍后调整滚动.
+    if (prevProps.list.length < this.props.list.length) {
+      const list = this.listRef.current;
+      return list.scrollHeight - list.scrollTop;
+    }
+    return null;
+  }
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    //如果我们有snapshot值, 我们已经添加了 新的items.
+    // 调整滚动以至于这些新的items 不会将旧items推出视图。
+    // (这边的snapshot是 getSnapshotBeforeUpdate方法的返回值)
+    if (snapshot !== null) {
+      const list = this.listRef.current;
+      list.scrollTop = list.scrollHeight - snapshot;
+    }
+  }
+
+  render() {
+    return (
+      <div ref={this.listRef}>{/* ...contents... */}</div>
+    );
+  }
+}
+
+```
 
 <img src="lifecycle.png" />
 <img src="lifecycle1.png" />
 <img src="lifecycle2.png" />
 
-- 源码分析
-  - 
 
 # React源码
 - extends。继承了ReactComponent
 - component的render。render其实就是调用React.createElement方法。该方法返回一个ReactElement对象，即组件对象。
 - ReactDOM.render(component,mountNode).
+
+
+
+# servier worker
+# pwa
