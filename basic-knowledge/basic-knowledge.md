@@ -3,7 +3,8 @@ title: 前端基础技能
 author: 大大白
 date: 2017-11-03 12:00:00
 categories:
-- 前端基础
+- WEB前端
+- 基础知识
 tags: 
 - 前端基础
 ---

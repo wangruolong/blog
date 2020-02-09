@@ -3,6 +3,7 @@ title: 深入理解React高阶组件
 author: 大大白
 date: 2018-12-29 12:00:00
 categories:
+- WEB前端
 - 高阶组件
 tags: 
 - 高阶组件

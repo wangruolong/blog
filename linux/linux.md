@@ -3,6 +3,7 @@ title: Linux
 author: 大大白
 date: 2015-01-06 18:30:00
 categories:
+- 服务器相关
 - Linux服务器基本配置
 tags: 
 - Linux服务器基本配置
