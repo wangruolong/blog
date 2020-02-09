@@ -39,6 +39,44 @@ make
 6. 安装。
 make install
 
+## Nginx配置
+location中的root和alias的最大区别是：root的结果是root+location，而alias的结果是alias替换location的路径。
+需要特别注意的是alias后的的路径需要以`/`结尾
+
+**示例一**
+```
+location /huan/ {
+    alias /home/www/huan/;
+}
+```
+在上面alias虚拟目录配置下，访问`http://www.xxx.com/huan/a.html`实际指定的是`/home/www/huan/a.html`。
+注意：alias指定的目录后面必须要加上"/"，即/home/www/huan/不能改成/home/www/huan
+
+上面的配置也可以改成root目录配置，如下，这样nginx就会去/home/www/huan下寻找`http://www.xxx.com/huan`的访问资源，两者配置后的访问效果是一样的！
+```
+location /huan/ {
+    root /home/www/;
+}
+```
+
+**示例二**
+上面的例子中alias设置的目录名和location匹配访问的path目录名一致，这样可以直接改成root目录配置；那要是不一致呢？
+再看一例：
+```
+location /web/ {
+    alias /home/www/html/;
+}
+```
+
+访问`http://www.colorgg.com/web`的时候就会去/home/www/html/下寻找访问资源。
+这样的话，还不能直接改成root目录配置。
+如果非要改成root目录配置，就只能在/home/www下将html->web（做软连接，即快捷方式），如下：
+```
+location /web/ {
+    root /home/www/;
+}
+```
+
 ## 安装rar解压工具
 
 ## 安装https证书
