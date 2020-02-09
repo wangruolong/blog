@@ -13,6 +13,21 @@ Git 在使用过程中的一些积累和沉淀。目前包含了 Sourcetree 的�
 
 <!-- more -->
 
+# 安装Git
+**在Linux安装和使用Git**
+```
+//生成公钥和私钥
+ssh-keygen
+//公钥添加到github
+//私钥添加到本地git
+ssh-add ~/.ssh/id_rsa
+//如果执行ssh-add时出现Could not open a connection to your authentication agent
+//先执行eval
+eval `ssh-agent`
+//再重新ssh-add就能成功了
+ssh-add ~/.ssh/id_rsa
+```
+
 # Sourcetree
 
 安装和使用 Sourcetree。
